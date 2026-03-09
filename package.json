@@ -1,0 +1,19 @@
+{
+  "name": "zoom-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "preview": "node .output/server/index.mjs",
+    "prepare": "nitro prepare"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "h3": "^1.15.4",
+    "nitropack": "^2.12.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
