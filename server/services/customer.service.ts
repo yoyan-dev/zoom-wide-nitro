@@ -27,7 +27,7 @@ export async function createCustomerService(
   if (!payload.company_name || !payload.contact_name || !payload.email) {
     throw createError({
       statusCode: 400,
-      statusMessage: "company_name, contact_name and email are required.",
+      statusMessage: "company name, contact name and email are required.",
     });
   }
 

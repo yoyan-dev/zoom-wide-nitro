@@ -2,24 +2,27 @@ import { createError, type H3Event } from "h3";
 import type { Payment } from "../../shared/types";
 import type { RecordPaymentPayload } from "../types";
 import { getOrderById } from "../repositories/order.repo";
-import { createPayment, listPaymentsByOrderId } from "../repositories/payment.repo";
+import {
+  createPayment,
+  listPaymentsByOrderId,
+} from "../repositories/payment.repo";
 import { assertExists, getSupabaseClient } from "../utils/supabase";
 
 export async function listOrderPaymentsService(
   event: H3Event,
-  orderId: string
+  orderId: string,
 ): Promise<Payment[]> {
   return listPaymentsByOrderId(getSupabaseClient(event), orderId);
 }
 
 export async function recordPaymentService(
   event: H3Event,
-  payload: RecordPaymentPayload
+  payload: RecordPaymentPayload,
 ): Promise<Payment> {
   if (!payload.order_id || payload.amount <= 0) {
     throw createError({
       statusCode: 400,
-      statusMessage: "order_id and a positive amount are required.",
+      statusMessage: "order id and a positive amount are required.",
     });
   }
 

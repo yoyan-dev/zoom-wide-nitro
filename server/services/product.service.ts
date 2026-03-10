@@ -14,7 +14,7 @@ function validateProductPayload(payload: CreateProductPayload): void {
   if (!payload.category_id || !payload.sku || !payload.name) {
     throw createError({
       statusCode: 400,
-      statusMessage: "category_id, sku, and name are required.",
+      statusMessage: "category id, sku, and name are required.",
     });
   }
 
@@ -45,7 +45,7 @@ export async function listProductsService(event: H3Event): Promise<Product[]> {
 
 export async function getProductService(
   event: H3Event,
-  id: string
+  id: string,
 ): Promise<Product> {
   const product = await getProductById(getSupabaseClient(event), id);
   return assertExists(product, "Product not found.");
@@ -53,7 +53,7 @@ export async function getProductService(
 
 export async function createProductService(
   event: H3Event,
-  payload: CreateProductPayload
+  payload: CreateProductPayload,
 ): Promise<Product> {
   validateProductPayload(payload);
   return createProduct(getSupabaseClient(event), payload);
@@ -61,7 +61,7 @@ export async function createProductService(
 
 export async function updateProductService(
   event: H3Event,
-  payload: UpdateProductPayload
+  payload: UpdateProductPayload,
 ): Promise<Product> {
   const supabase = getSupabaseClient(event);
   await getProductService(event, payload.id);
@@ -72,7 +72,7 @@ export async function updateProductService(
 
 export async function deleteProductService(
   event: H3Event,
-  id: string
+  id: string,
 ): Promise<{ success: true }> {
   await getProductService(event, id);
   await deleteProduct(getSupabaseClient(event), id);

@@ -17,12 +17,12 @@ export interface InventoryMovementResult {
 function calculateNextStock(
   movementType: LogInventoryMovementPayload["movement_type"],
   currentStock: number,
-  quantityChange: number
+  quantityChange: number,
 ): { nextStock: number; normalizedChange: number } {
   if (quantityChange === 0) {
     throw createError({
       statusCode: 400,
-      statusMessage: "quantity_change must not be 0.",
+      statusMessage: "quantity change must not be 0.",
     });
   }
 
@@ -54,7 +54,7 @@ export async function getStockService(event: H3Event) {
 
 export async function logMovementService(
   event: H3Event,
-  payload: LogInventoryMovementPayload
+  payload: LogInventoryMovementPayload,
 ): Promise<InventoryMovementResult> {
   const supabase = getSupabaseClient(event);
   const product = await getProductForStockUpdate(supabase, payload.product_id);
@@ -63,7 +63,7 @@ export async function logMovementService(
   const { nextStock, normalizedChange } = calculateNextStock(
     payload.movement_type,
     safeProduct.stock_quantity,
-    payload.quantity_change
+    payload.quantity_change,
   );
 
   if (nextStock < 0) {
@@ -76,7 +76,7 @@ export async function logMovementService(
   const updatedProduct = await updateProductStock(
     supabase,
     safeProduct.id,
-    nextStock
+    nextStock,
   );
   const safeUpdatedProduct = assertExists(updatedProduct, "Product not found.");
 
@@ -100,7 +100,7 @@ export async function consumeStockForOrderService(
   event: H3Event,
   orderId: string,
   orderItems: { product_id: string; quantity: number }[],
-  createdBy?: string | null
+  createdBy?: string | null,
 ): Promise<void> {
   for (const item of orderItems) {
     await logMovementService(event, {

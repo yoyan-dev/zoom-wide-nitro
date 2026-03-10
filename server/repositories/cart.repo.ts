@@ -14,7 +14,7 @@ export interface CartItemWithProduct extends CartItem {
 
 export async function getActiveCartByCustomerId(
   supabase: SupabaseClient<Database>,
-  customerId: string
+  customerId: string,
 ): Promise<Cart | null> {
   const { data, error } = await supabase
     .from("carts")
@@ -29,7 +29,7 @@ export async function getActiveCartByCustomerId(
 
 export async function createActiveCart(
   supabase: SupabaseClient<Database>,
-  customerId: string
+  customerId: string,
 ): Promise<Cart> {
   const { data, error } = await supabase
     .from("carts")
@@ -46,7 +46,7 @@ export async function createActiveCart(
 
 export async function getOrCreateActiveCart(
   supabase: SupabaseClient<Database>,
-  customerId: string
+  customerId: string,
 ): Promise<Cart> {
   const existing = await getActiveCartByCustomerId(supabase, customerId);
   if (existing) {
@@ -58,7 +58,7 @@ export async function getOrCreateActiveCart(
 
 export async function listCartItems(
   supabase: SupabaseClient<Database>,
-  cartId: string
+  cartId: string,
 ): Promise<CartItemWithProduct[]> {
   const { data, error } = await supabase
     .from("cart_items")
@@ -73,7 +73,7 @@ export async function listCartItems(
 export async function getCartItem(
   supabase: SupabaseClient<Database>,
   cartId: string,
-  productId: string
+  productId: string,
 ): Promise<CartItem | null> {
   const { data, error } = await supabase
     .from("cart_items")
@@ -88,7 +88,7 @@ export async function getCartItem(
 
 export async function createCartItem(
   supabase: SupabaseClient<Database>,
-  payload: CartItemInsert
+  payload: CartItemInsert,
 ): Promise<CartItem> {
   const { data, error } = await supabase
     .from("cart_items")
@@ -103,7 +103,7 @@ export async function createCartItem(
 export async function updateCartItemQuantity(
   supabase: SupabaseClient<Database>,
   cartItemId: string,
-  quantity: number
+  quantity: number,
 ): Promise<CartItem> {
   const { data, error } = await supabase
     .from("cart_items")
@@ -122,7 +122,7 @@ export async function updateCartItemQuantity(
 export async function deleteCartItem(
   supabase: SupabaseClient<Database>,
   cartId: string,
-  productId: string
+  productId: string,
 ): Promise<void> {
   const { error } = await supabase
     .from("cart_items")
@@ -134,8 +134,11 @@ export async function deleteCartItem(
 
 export async function clearCartItems(
   supabase: SupabaseClient<Database>,
-  cartId: string
+  cartId: string,
 ): Promise<void> {
-  const { error } = await supabase.from("cart_items").delete().eq("cart_id", cartId);
+  const { error } = await supabase
+    .from("cart_items")
+    .delete()
+    .eq("cart_id", cartId);
   assertSupabaseSuccess(error, "Failed to clear cart.");
 }

@@ -1,6 +1,9 @@
 import { createError, type H3Event } from "h3";
 import type { Delivery } from "../../shared/types";
-import type { CreateDeliveryPayload, UpdateDeliveryStatusPayload } from "../types";
+import type {
+  CreateDeliveryPayload,
+  UpdateDeliveryStatusPayload,
+} from "../types";
 import {
   createDelivery,
   getDeliveryById,
@@ -11,18 +14,20 @@ import {
 import { getOrderById, updateOrder } from "../repositories/order.repo";
 import { assertExists, getSupabaseClient } from "../utils/supabase";
 
-export async function listDeliveriesService(event: H3Event): Promise<Delivery[]> {
+export async function listDeliveriesService(
+  event: H3Event,
+): Promise<Delivery[]> {
   return listDeliveries(getSupabaseClient(event));
 }
 
 export async function createDeliveryService(
   event: H3Event,
-  payload: CreateDeliveryPayload
+  payload: CreateDeliveryPayload,
 ): Promise<Delivery> {
   if (!payload.order_id) {
     throw createError({
       statusCode: 400,
-      statusMessage: "order_id is required.",
+      statusMessage: "order id is required.",
     });
   }
 
@@ -56,7 +61,7 @@ export async function createDeliveryService(
 
 export async function updateDeliveryStatusService(
   event: H3Event,
-  payload: UpdateDeliveryStatusPayload
+  payload: UpdateDeliveryStatusPayload,
 ): Promise<Delivery> {
   const supabase = getSupabaseClient(event);
   const delivery = await getDeliveryById(supabase, payload.delivery_id);
@@ -66,7 +71,7 @@ export async function updateDeliveryStatusService(
     status: payload.status,
     delivered_at:
       payload.status === "delivered"
-        ? payload.delivered_at ?? new Date().toISOString()
+        ? (payload.delivered_at ?? new Date().toISOString())
         : null,
   });
   const safeUpdated = assertExists(updated, "Delivery not found.");

@@ -19,18 +19,27 @@ export interface OrderDetail extends Order {
 }
 
 function validateCreateOrderPayload(payload: CreateOrderPayload): void {
-  if (!payload.customer_id || !Array.isArray(payload.items) || !payload.items.length) {
+  if (
+    !payload.customer_id ||
+    !Array.isArray(payload.items) ||
+    !payload.items.length
+  ) {
     throw createError({
       statusCode: 400,
-      statusMessage: "customer_id and at least one order item are required.",
+      statusMessage: "customer id and at least one order item are required.",
     });
   }
 
   for (const item of payload.items) {
-    if (!item.product_id || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+    if (
+      !item.product_id ||
+      !Number.isInteger(item.quantity) ||
+      item.quantity <= 0
+    ) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Each order item must include product_id and positive quantity.",
+        statusMessage:
+          "Each order item must include product_id and positive quantity.",
       });
     }
   }
@@ -46,7 +55,7 @@ export async function listOrdersService(event: H3Event): Promise<Order[]> {
 
 export async function getOrderService(
   event: H3Event,
-  orderId: string
+  orderId: string,
 ): Promise<OrderDetail> {
   const supabase = getSupabaseClient(event);
   const order = await getOrderById(supabase, orderId);
@@ -61,7 +70,7 @@ export async function getOrderService(
 
 export async function createOrderService(
   event: H3Event,
-  payload: CreateOrderPayload
+  payload: CreateOrderPayload,
 ): Promise<OrderDetail> {
   validateCreateOrderPayload(payload);
 
@@ -81,7 +90,7 @@ export async function createOrderService(
     if (!product) {
       throw createError({
         statusCode: 400,
-        statusMessage: `Invalid product_id: ${item.product_id}`,
+        statusMessage: `Invalid product id: ${item.product_id}`,
       });
     }
 
@@ -122,7 +131,7 @@ export async function createOrderService(
         unit_price: unitPrice,
         line_total: Number((unitPrice * item.quantity).toFixed(2)),
       };
-    })
+    }),
   );
 
   return getOrderService(event, order.id);
@@ -131,7 +140,7 @@ export async function createOrderService(
 export async function approveOrderService(
   event: H3Event,
   orderId: string,
-  approvedBy?: string
+  approvedBy?: string,
 ): Promise<OrderDetail> {
   const supabase = getSupabaseClient(event);
   const order = await getOrderById(supabase, orderId);
@@ -159,7 +168,7 @@ export async function approveOrderService(
       product_id: item.product_id,
       quantity: item.quantity,
     })),
-    approvedBy ?? null
+    approvedBy ?? null,
   );
 
   await updateOrder(supabase, orderId, {
@@ -175,7 +184,7 @@ export async function rejectOrderService(
   event: H3Event,
   orderId: string,
   reason: string,
-  rejectedBy?: string
+  rejectedBy?: string,
 ): Promise<OrderDetail> {
   if (!reason) {
     throw createError({
