@@ -1,11 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineNitroPlugin, useRuntimeConfig } from "nitropack/runtime";
-import type { Database } from "../../shared/types";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { useRuntimeConfig } from "nitropack/runtime";
 
-export default defineNitroPlugin((nitroApp) => {
+let supabaseAdmin: SupabaseClient | null = null;
+
+function getSupabaseConfig() {
   const runtimeConfig = useRuntimeConfig();
-  const supabaseUrl =
-    runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
+  const supabaseUrl = runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
   const serviceRoleKey =
     runtimeConfig.supabaseServiceRoleKey ||
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
@@ -13,18 +13,29 @@ export default defineNitroPlugin((nitroApp) => {
 
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error(
-      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment variables.",
+      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.",
     );
   }
 
-  const supabase = createClient<Database>(supabaseUrl, serviceRoleKey, {
+  return {
+    supabaseUrl,
+    serviceRoleKey,
+  };
+}
+
+export function getSupabaseAdmin(): SupabaseClient {
+  if (supabaseAdmin) {
+    return supabaseAdmin;
+  }
+
+  const { supabaseUrl, serviceRoleKey } = getSupabaseConfig();
+
+  supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
   });
 
-  nitroApp.hooks.hook("request", (event) => {
-    event.context.supabase = supabase;
-  });
-});
+  return supabaseAdmin;
+}

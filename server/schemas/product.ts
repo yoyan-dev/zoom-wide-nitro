@@ -1,25 +1,38 @@
 import { z } from "zod";
+import { paginationQuerySchema, textIdSchema } from "./common";
+
+export const productSpecificationSchema = z.object({
+  label: z.string().trim().min(1),
+  value: z.string().trim().min(1),
+});
+
+export const productHandbookDetailsSchema = z.object({
+  summary: z.string().trim().min(1).optional(),
+  features: z.array(z.string().trim().min(1)).optional(),
+  applications: z.array(z.string().trim().min(1)).optional(),
+  specifications: z.array(productSpecificationSchema).optional(),
+});
 
 export const createProductSchema = z.object({
-  category_id: z.uuid(),
-  supplier_id: z.uuid().nullable().optional(),
-  sku: z.string().min(2).max(60),
-  name: z.string().min(2).max(160),
-  description: z.string().max(2000).nullable().optional(),
-  image_url: z.url().nullable().optional(),
-  unit: z.string().min(1).max(30),
+  category_id: textIdSchema,
+  supplier_id: textIdSchema.nullable().optional(),
+  warehouse_id: textIdSchema.nullable().optional(),
+  sku: z.string().trim().min(1).max(60),
+  name: z.string().trim().min(1).max(160),
+  description: z.string().trim().max(2000).nullable().optional(),
+  image_url: z.string().trim().url().nullable().optional(),
+  unit: z.string().trim().min(1).max(30),
   price: z.coerce.number().min(0),
-  stock_quantity: z.coerce.number().int().min(0).default(0),
-  minimum_stock_quantity: z.coerce.number().int().min(0).default(0),
-  is_active: z.boolean().optional(),
+  stock_quantity: z.coerce.number().min(0).default(0),
+  minimum_stock_quantity: z.coerce.number().min(0).default(0),
+  handbook: productHandbookDetailsSchema.optional(),
+  is_active: z.boolean().default(true),
 });
 
 export const updateProductSchema = createProductSchema.partial();
 
-export const productQuerySchema = z.object({
-  q: z.string().optional(),
-  category_id: z.uuid().optional(),
-  supplier_id: z.uuid().optional(),
-  page: z.coerce.number().min(1).default(1),
-  limit: z.coerce.number().min(1).max(100).default(10),
+export const productQuerySchema = paginationQuerySchema.extend({
+  q: z.string().trim().optional(),
+  category_id: z.string().trim().optional(),
+  supplier_id: z.string().trim().optional(),
 });
