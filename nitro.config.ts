@@ -7,4 +7,9 @@ export default defineNitroConfig({
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
   },
+  routeRules: {
+    "/api/**": {
+      cors: true,
+    },
+  },
 });

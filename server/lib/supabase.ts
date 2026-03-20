@@ -13,7 +13,7 @@ export default defineNitroPlugin((nitroApp) => {
 
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error(
-      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment variables."
+      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment variables.",
     );
   }
 
