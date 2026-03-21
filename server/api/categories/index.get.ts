@@ -16,18 +16,16 @@ export default defineEventHandler(async (event) => {
   const { q, page, limit } = parsedQuery.data;
   const { from, to } = getPagination({ page, limit });
   const supabase = getSupabaseAdmin();
-  const mapCategory = (row: any): Category => ({
-    ...row,
-    overview: row.overview ?? undefined,
-  });
-
   let query = supabase
     .from("categories")
     .select("*", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(from, to);
 
-  if (q) query = query.or("name.ilike.*" + q + "*");
+  if (q)
+    query = query.or(
+      ["name.ilike.%" + q + "%", "description.ilike.%" + q + "%"].join(","),
+    );
 
   const { data, error, count } = await query;
 
@@ -36,7 +34,7 @@ export default defineEventHandler(async (event) => {
     return internalError(error.message);
   }
 
-  return ok((data ?? []).map(mapCategory), {
+  return ok(data ?? [], {
     total: count ?? 0,
   });
 });

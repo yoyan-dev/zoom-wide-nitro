@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
         overview: data.overview ?? undefined,
       },
       {
-      total: 1,
+        total: 1,
       },
     );
   }
@@ -83,13 +83,7 @@ export default defineEventHandler(async (event) => {
     return notFound("Category not found");
   }
 
-  return ok(
-    {
-      ...(data as Category),
-      overview: data.overview ?? undefined,
-    },
-    {
+  return ok(data, {
     total: 1,
-    },
-  );
+  });
 });

@@ -1,19 +1,7 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { randomUUID } from "node:crypto";
-import type { Supplier } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createSupplierSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
-
-function mapSupplier(row: any): Supplier {
-  return {
-    ...row,
-    contact_name: row.contact_name ?? undefined,
-    phone: row.phone ?? undefined,
-    email: row.email ?? undefined,
-    address: row.address ?? undefined,
-  };
-}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -28,7 +16,6 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
 
   const payload = {
-    id: randomUUID(),
     name: parsedBody.data.name,
     contact_name: parsedBody.data.contact_name ?? null,
     phone: parsedBody.data.phone ?? null,
@@ -50,7 +37,7 @@ export default defineEventHandler(async (event) => {
   }
 
   setResponseStatus(event, 201);
-  return created(mapSupplier(data), {
+  return created(data || {}, {
     total: 1,
   });
 });

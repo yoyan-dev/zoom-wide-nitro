@@ -1,5 +1,4 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { randomUUID } from "node:crypto";
 import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createInventoryLogSchema } from "../../schemas";
@@ -15,10 +14,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = getSupabaseAdmin();
-  const now = new Date().toISOString();
 
   const payload = {
-    id: randomUUID(),
     product_id: parsedBody.data.product_id,
     movement_type: parsedBody.data.movement_type,
     quantity_change: parsedBody.data.quantity_change,
@@ -26,14 +23,14 @@ export default defineEventHandler(async (event) => {
     reference_id: parsedBody.data.reference_id ?? null,
     note: parsedBody.data.note ?? null,
     created_by: parsedBody.data.created_by ?? null,
-    created_at: now,
-    updated_at: now,
   };
 
   const { data, error } = await supabase
     .from("inventory_logs")
     .insert(payload)
-    .select("id, product_id, movement_type, quantity_change, reference_type, reference_id, note, created_by, created_at")
+    .select(
+      "id, product_id, movement_type, quantity_change, reference_type, reference_id, note, created_by, created_at",
+    )
     .single();
 
   if (error) {

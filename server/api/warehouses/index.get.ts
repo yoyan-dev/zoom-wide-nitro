@@ -25,11 +25,9 @@ export default defineEventHandler(async (event) => {
 
   if (q) {
     query = query.or(
-      [
-        `id.ilike.%${q}%`,
-        `name.ilike.%${q}%`,
-        `address.ilike.%${q}%`,
-      ].join(","),
+      [`id.ilike.%${q}%`, `name.ilike.%${q}%`, `address.ilike.%${q}%`].join(
+        ",",
+      ),
     );
   }
 

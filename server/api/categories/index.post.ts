@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     setResponseStatus(event, 500);
+    console.log(payload);
     return internalError(error.message);
   }
 

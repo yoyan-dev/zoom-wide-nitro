@@ -1,5 +1,4 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import { randomUUID } from "node:crypto";
 import type { Warehouse } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createWarehouseSchema } from "../../schemas";
@@ -15,17 +14,13 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = getSupabaseAdmin();
-  const now = new Date().toISOString();
 
   const payload = {
-    id: randomUUID(),
     name: parsedBody.data.name,
     address: parsedBody.data.address,
     manager_id: parsedBody.data.manager_id ?? null,
     capacity: parsedBody.data.capacity,
     status: parsedBody.data.status,
-    created_at: now,
-    updated_at: now,
   };
 
   const { data, error } = await supabase

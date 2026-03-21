@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("inventory_logs")
-    .select("id, product_id, movement_type, quantity_change, reference_type, reference_id, note, created_by, created_at")
+    .select(
+      "id, product_id, movement_type, quantity_change, reference_type, reference_id, note, created_by, created_at, product:product_id",
+    )
     .eq("id", id)
     .maybeSingle();
 
