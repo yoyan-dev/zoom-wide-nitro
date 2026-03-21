@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import type { Warehouse } from "../../../shared/types";
+import { randomUUID } from "node:crypto";
+import type { Warehouse } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createWarehouseSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
 
   const payload = {
-    id: `wh-${Date.now()}`,
+    id: randomUUID(),
     name: parsedBody.data.name,
     address: parsedBody.data.address,
     manager_id: parsedBody.data.manager_id ?? null,

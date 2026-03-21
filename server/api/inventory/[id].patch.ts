@@ -4,7 +4,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import type { InventoryLog } from "../../../shared/types";
+import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { updateInventoryLogSchema } from "../../schemas";
 import { badRequest, internalError, notFound, ok } from "../../utils/response";

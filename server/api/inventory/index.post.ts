@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import type { InventoryLog } from "../../../shared/types";
+import { randomUUID } from "node:crypto";
+import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createInventoryLogSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
 
   const payload = {
-    id: `inv-${Date.now()}`,
+    id: randomUUID(),
     product_id: parsedBody.data.product_id,
     movement_type: parsedBody.data.movement_type,
     quantity_change: parsedBody.data.quantity_change,

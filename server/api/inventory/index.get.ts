@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
-import type { InventoryLog } from "../../../shared/types";
+import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { inventoryQuerySchema } from "../../schemas";
 import { getPagination } from "../../utils/pagination";

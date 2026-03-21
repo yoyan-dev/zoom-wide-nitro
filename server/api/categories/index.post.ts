@@ -1,15 +1,33 @@
 import {
   defineEventHandler,
-  readBody,
+  readMultipartFormData,
   setResponseStatus,
 } from "h3";
-import type { Category } from "../../../shared/types";
+import type { Category } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createCategorySchema } from "../../schemas";
+import { parseCategoryMultipartFields } from "../../utils/category-form-data";
 import { badRequest, created, internalError } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const formData = await readMultipartFormData(event);
+
+  if (!formData) {
+    setResponseStatus(event, 400);
+    return badRequest("multipart/form-data is required for category creation");
+  }
+
+  let body: ReturnType<typeof parseCategoryMultipartFields>;
+
+  try {
+    body = parseCategoryMultipartFields(formData);
+  } catch (error) {
+    setResponseStatus(event, 400);
+    return badRequest(
+      error instanceof Error ? error.message : "Invalid category form data",
+    );
+  }
+
   const parsedBody = createCategorySchema.safeParse(body);
 
   if (!parsedBody.success) {
@@ -18,20 +36,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = getSupabaseAdmin();
-  const now = new Date().toISOString();
-  const categoryId = `cat-${Date.now()}`;
 
   const payload = {
-    id: categoryId,
     name: parsedBody.data.name,
     description: parsedBody.data.description,
-    image_url: parsedBody.data.image_url,
     overview: parsedBody.data.overview ?? null,
     typical_uses: parsedBody.data.typical_uses,
     buying_considerations: parsedBody.data.buying_considerations,
     featured_specs: parsedBody.data.featured_specs,
-    created_at: now,
-    updated_at: now,
   };
 
   const { data, error } = await supabase
@@ -52,7 +64,7 @@ export default defineEventHandler(async (event) => {
       overview: data?.overview ?? undefined,
     },
     {
-    total: 1,
+      total: 1,
     },
   );
 });

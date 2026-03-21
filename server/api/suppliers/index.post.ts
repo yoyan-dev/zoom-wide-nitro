@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import type { Supplier } from "../../../shared/types";
+import { randomUUID } from "node:crypto";
+import type { Supplier } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createSupplierSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
@@ -27,7 +28,7 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
 
   const payload = {
-    id: `sup-${Date.now()}`,
+    id: randomUUID(),
     name: parsedBody.data.name,
     contact_name: parsedBody.data.contact_name ?? null,
     phone: parsedBody.data.phone ?? null,

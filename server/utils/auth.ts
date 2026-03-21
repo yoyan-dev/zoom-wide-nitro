@@ -1,5 +1,5 @@
 import { getHeader, type H3Event } from "h3";
-import type { UserRole } from "../../shared/types/user";
+import type { UserRole } from "../../types/user";
 
 export type RequestUser = {
   id: string;

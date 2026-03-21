@@ -4,7 +4,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import type { Category } from "../../../shared/types";
+import type { Category } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { updateCategorySchema } from "../../schemas";
 import { badRequest, internalError, notFound, ok } from "../../utils/response";
@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
     Object.entries({
       name: parsedBody.data.name,
       description: parsedBody.data.description,
-      image_url: parsedBody.data.image_url,
       overview: parsedBody.data.overview,
       typical_uses: parsedBody.data.typical_uses,
       buying_considerations: parsedBody.data.buying_considerations,

@@ -1,3 +1,5 @@
+create extension if not exists pgcrypto;
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -9,10 +11,9 @@ end;
 $$;
 
 create table if not exists public.categories (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   description text not null,
-  image_url text not null,
   overview text,
   typical_uses text[] not null default '{}',
   buying_considerations text[] not null default '{}',
@@ -25,7 +26,7 @@ create table if not exists public.categories (
 );
 
 create table if not exists public.suppliers (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   contact_name text,
   phone text,
@@ -36,10 +37,10 @@ create table if not exists public.suppliers (
 );
 
 create table if not exists public.warehouses (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   address text not null,
-  manager_id text,
+  manager_id uuid,
   capacity integer not null,
   status text not null,
   created_at timestamptz not null default now(),
@@ -51,10 +52,10 @@ create table if not exists public.warehouses (
 );
 
 create table if not exists public.products (
-  id text primary key,
-  category_id text not null references public.categories(id),
-  supplier_id text references public.suppliers(id) on delete set null,
-  warehouse_id text references public.warehouses(id) on delete set null,
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.categories(id),
+  supplier_id uuid references public.suppliers(id) on delete set null,
+  warehouse_id uuid references public.warehouses(id) on delete set null,
   sku text not null unique,
   name text not null,
   description text,
@@ -78,8 +79,8 @@ create table if not exists public.products (
 );
 
 create table if not exists public.inventory_logs (
-  id text primary key,
-  product_id text not null references public.products(id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
+  product_id uuid not null references public.products(id) on delete cascade,
   movement_type text not null,
   quantity_change numeric(12, 2) not null,
   reference_type text,

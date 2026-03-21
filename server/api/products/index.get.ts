@@ -4,7 +4,7 @@ import type {
   Product,
   Supplier,
   Warehouse,
-} from "../../../shared/types";
+} from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { productQuerySchema } from "../../schemas";
 import { getPagination } from "../../utils/pagination";

@@ -4,7 +4,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import type { Supplier } from "../../../shared/types";
+import type { Supplier } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { updateSupplierSchema } from "../../schemas";
 import { badRequest, internalError, notFound, ok } from "../../utils/response";

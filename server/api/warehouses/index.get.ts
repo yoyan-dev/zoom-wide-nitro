@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
-import type { Warehouse } from "../../../shared/types";
+import type { Warehouse } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { warehouseQuerySchema } from "../../schemas";
 import { getPagination } from "../../utils/pagination";

@@ -1,10 +1,11 @@
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { randomUUID } from "node:crypto";
 import type {
   Category,
   Product,
   Supplier,
   Warehouse,
-} from "../../../shared/types";
+} from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createProductSchema } from "../../schemas";
 import { badRequest, created, internalError, notFound } from "../../utils/response";
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
   const supabase = getSupabaseAdmin();
   const now = new Date().toISOString();
-  const productId = `prod-${Date.now()}`;
+  const productId = randomUUID();
 
   const insertPayload = {
     id: productId,

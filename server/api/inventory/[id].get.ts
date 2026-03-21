@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import type { InventoryLog } from "../../../shared/types";
+import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { badRequest, internalError, notFound, ok } from "../../utils/response";
 

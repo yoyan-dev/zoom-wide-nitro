@@ -9,7 +9,7 @@ import type {
   Product,
   Supplier,
   Warehouse,
-} from "../../../shared/types";
+} from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { updateProductSchema } from "../../schemas";
 import { badRequest, internalError, notFound, ok } from "../../utils/response";

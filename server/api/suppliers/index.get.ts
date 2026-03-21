@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
-import type { Supplier } from "../../../shared/types";
+import type { Supplier } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { supplierQuerySchema } from "../../schemas";
 import { getPagination } from "../../utils/pagination";

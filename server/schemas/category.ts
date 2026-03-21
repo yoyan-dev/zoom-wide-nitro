@@ -9,7 +9,6 @@ export const categorySpecHighlightSchema = z.object({
 export const createCategorySchema = z.object({
   name: z.string().trim().min(1).max(120),
   description: z.string().trim().min(1).max(500),
-  image_url: z.string().trim().url(),
   overview: z.string().trim().min(1).optional(),
   typical_uses: z.array(z.string().trim().min(1)).default([]),
   buying_considerations: z.array(z.string().trim().min(1)).default([]),

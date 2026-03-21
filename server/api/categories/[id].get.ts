@@ -3,7 +3,7 @@ import {
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import type { Category } from "../../../shared/types";
+import type { Category } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { notFound, internalError, ok, badRequest } from "../../utils/response";
 

@@ -1,4 +1,4 @@
-import type { H3Response, StatusMessage } from "../../shared/types";
+import type { H3Response, StatusMessage } from "../../types";
 
 type ResponseOptions = {
   total?: number;
