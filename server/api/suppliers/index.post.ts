@@ -1,10 +1,32 @@
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import {
+  defineEventHandler,
+  readMultipartFormData,
+  setResponseStatus,
+} from "h3";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createSupplierSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
+import { parseSupplierMultipartFields } from "../../utils/resource-form-data";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const formData = await readMultipartFormData(event);
+
+  if (!formData) {
+    setResponseStatus(event, 400);
+    return badRequest("multipart/form-data is required for supplier creation");
+  }
+
+  let body: ReturnType<typeof parseSupplierMultipartFields>;
+
+  try {
+    body = parseSupplierMultipartFields(formData);
+  } catch (error) {
+    setResponseStatus(event, 400);
+    return badRequest(
+      error instanceof Error ? error.message : "Invalid supplier form data",
+    );
+  }
+
   const parsedBody = createSupplierSchema.safeParse(body);
 
   if (!parsedBody.success) {

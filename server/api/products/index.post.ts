@@ -1,16 +1,36 @@
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
-import type { Product } from "../../../types";
+import {
+  defineEventHandler,
+  readMultipartFormData,
+  setResponseStatus,
+} from "h3";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createProductSchema } from "../../schemas";
 import {
   badRequest,
   created,
   internalError,
-  notFound,
 } from "../../utils/response";
+import { parseProductMultipartFields } from "../../utils/resource-form-data";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const formData = await readMultipartFormData(event);
+
+  if (!formData) {
+    setResponseStatus(event, 400);
+    return badRequest("multipart/form-data is required for product creation");
+  }
+
+  let body: ReturnType<typeof parseProductMultipartFields>;
+
+  try {
+    body = parseProductMultipartFields(formData);
+  } catch (error) {
+    setResponseStatus(event, 400);
+    return badRequest(
+      error instanceof Error ? error.message : "Invalid product form data",
+    );
+  }
+
   const parsedBody = createProductSchema.safeParse(body);
 
   if (!parsedBody.success) {
@@ -39,22 +59,11 @@ export default defineEventHandler(async (event) => {
     updated_at: now,
   };
 
-  const { error: insertError } = await supabase
-    .from("products")
-    .insert(insertPayload);
-
-  if (insertError) {
-    setResponseStatus(event, 500);
-    return internalError(insertError.message);
-  }
-
   const { data, error } = await supabase
     .from("products")
-    .select(
-      "*, category:category_id, supplier:supplier_id, warehouse:warehouse_id",
-    )
-    .eq("id", body.id)
-    .maybeSingle();
+    .insert(insertPayload)
+    .select("*")
+    .single();
 
   if (error) {
     setResponseStatus(event, 500);

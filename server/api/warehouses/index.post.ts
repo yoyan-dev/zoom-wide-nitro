@@ -1,11 +1,33 @@
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import {
+  defineEventHandler,
+  readMultipartFormData,
+  setResponseStatus,
+} from "h3";
 import type { Warehouse } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createWarehouseSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
+import { parseWarehouseMultipartFields } from "../../utils/resource-form-data";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const formData = await readMultipartFormData(event);
+
+  if (!formData) {
+    setResponseStatus(event, 400);
+    return badRequest("multipart/form-data is required for warehouse creation");
+  }
+
+  let body: ReturnType<typeof parseWarehouseMultipartFields>;
+
+  try {
+    body = parseWarehouseMultipartFields(formData);
+  } catch (error) {
+    setResponseStatus(event, 400);
+    return badRequest(
+      error instanceof Error ? error.message : "Invalid warehouse form data",
+    );
+  }
+
   const parsedBody = createWarehouseSchema.safeParse(body);
 
   if (!parsedBody.success) {

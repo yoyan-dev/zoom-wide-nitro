@@ -1,11 +1,33 @@
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import {
+  defineEventHandler,
+  readMultipartFormData,
+  setResponseStatus,
+} from "h3";
 import type { InventoryLog } from "../../../types";
 import { getSupabaseAdmin } from "../../lib/supabase";
 import { createInventoryLogSchema } from "../../schemas";
 import { badRequest, created, internalError } from "../../utils/response";
+import { parseInventoryMultipartFields } from "../../utils/resource-form-data";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const formData = await readMultipartFormData(event);
+
+  if (!formData) {
+    setResponseStatus(event, 400);
+    return badRequest("multipart/form-data is required for inventory creation");
+  }
+
+  let body: ReturnType<typeof parseInventoryMultipartFields>;
+
+  try {
+    body = parseInventoryMultipartFields(formData);
+  } catch (error) {
+    setResponseStatus(event, 400);
+    return badRequest(
+      error instanceof Error ? error.message : "Invalid inventory form data",
+    );
+  }
+
   const parsedBody = createInventoryLogSchema.safeParse(body);
 
   if (!parsedBody.success) {
