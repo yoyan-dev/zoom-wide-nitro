@@ -1,3 +1,4 @@
+import type { Product } from "./product";
 import type { PaginationMeta, PaginationParams } from "./pagination";
 
 export type InventoryMovementType = "in" | "out" | "adjustment";
@@ -12,6 +13,19 @@ export interface InventoryLog {
   note: string | null;
   created_by: string | null;
   created_at: string;
+}
+
+export interface InventoryStockItem {
+  product_id: string;
+  stock_quantity: number;
+  minimum_stock_quantity: number;
+  is_low_stock: boolean;
+  product: Product;
+}
+
+export interface InventoryMovementResult {
+  log: InventoryLog;
+  stock: InventoryStockItem;
 }
 
 export interface FetchInventoryParams extends PaginationParams {

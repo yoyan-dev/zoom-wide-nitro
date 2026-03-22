@@ -1,43 +1,25 @@
-import { defineEventHandler, getQuery, setResponseStatus } from "h3";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { inventoryQuerySchema } from "../../schemas";
-import { getPagination } from "../../utils/pagination";
-import { badRequest, internalError, ok } from "../../utils/response";
+import { defineEventHandler } from "h3";
+import { getStockView } from "../../services/inventory/get-stock-view";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { parseQuery } from "../../utils/query";
+import { paginated } from "../../utils/response";
+import { number, optional, string } from "../../utils/validator";
 
 export default defineEventHandler(async (event) => {
-  const parsedQuery = inventoryQuerySchema.safeParse(getQuery(event));
+  try {
+    const query = parseQuery(event, {
+      q: (value) => optional(value, (current) => string(current, "q")),
+      product_id: (value) =>
+        optional(value, (current) => string(current, "product_id")),
+      page: (value) => optional(value, (current) => number(current, "page")) ?? 1,
+      limit: (value) =>
+        optional(value, (current) => number(current, "limit")) ?? 10,
+    });
 
-  if (!parsedQuery.success) {
-    setResponseStatus(event, 400);
-    return badRequest(parsedQuery.error.message);
+    const result = await getStockView(query);
+
+    return paginated(result.data, result.meta);
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const { q, movement_type, product_id, page, limit } = parsedQuery.data;
-  const { from, to } = getPagination({ page, limit });
-  const supabase = getSupabaseAdmin();
-
-  let query = supabase
-    .from("inventory_logs")
-    .select("*, product:product_id")
-    .order("created_at", { ascending: false })
-    .range(from, to);
-
-  if (q)
-    query = query.or(
-      [`note.ilike.%${q}%`, `reference_id.ilike.%${q}%`].join(","),
-    );
-
-  if (movement_type) query = query.eq("movement_type", movement_type);
-  if (product_id) query = query.eq("product_id", product_id);
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  return ok(data ?? [], {
-    total: count ?? 0,
-  });
 });

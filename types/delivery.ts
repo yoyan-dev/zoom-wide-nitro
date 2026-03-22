@@ -1,3 +1,4 @@
+import type { Order } from "./order";
 import type { PaginationMeta, PaginationParams } from "./pagination";
 
 export type DeliveryStatus =
@@ -15,6 +16,7 @@ export interface Delivery {
   status: DeliveryStatus;
   scheduled_at: string | null;
   delivered_at: string | null;
+  order?: Order;
   created_at: string;
   updated_at: string;
 }

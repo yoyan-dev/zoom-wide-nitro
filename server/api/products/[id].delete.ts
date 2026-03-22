@@ -1,35 +1,15 @@
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { badRequest, internalError, notFound, ok } from "../../utils/response";
+import { deleteProduct } from "../../services/products/delete-product";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  try {
+    await deleteProduct(getRouterParam(event, "id"));
 
-  if (!id) {
-    setResponseStatus(event, 400);
-    return badRequest("Product id is required");
+    setResponseStatus(event, 204);
+    return noContent("Product deleted");
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("products")
-    .delete()
-    .eq("id", id)
-    .select("id")
-    .maybeSingle();
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  if (!data) {
-    setResponseStatus(event, 404);
-    return notFound("Product not found");
-  }
-
-  return ok(null, {
-    total: 1,
-    message: "Product deleted",
-  });
 });

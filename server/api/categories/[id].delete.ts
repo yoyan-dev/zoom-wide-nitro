@@ -3,37 +3,17 @@ import {
   getRouterParam,
   setResponseStatus,
 } from "h3";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { badRequest, internalError, notFound, ok } from "../../utils/response";
+import { deleteCategory } from "../../services/categories/delete-category";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  try {
+    await deleteCategory(getRouterParam(event, "id"));
 
-  if (!id) {
-    setResponseStatus(event, 400);
-    return badRequest("Category id is required");
+    setResponseStatus(event, 204);
+    return noContent("Category deleted");
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("categories")
-    .delete()
-    .eq("id", id)
-    .select("id")
-    .maybeSingle();
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  if (!data) {
-    setResponseStatus(event, 404);
-    return notFound("Category not found");
-  }
-
-  return ok(null, {
-    total: 1,
-    message: "Category deleted",
-  });
 });

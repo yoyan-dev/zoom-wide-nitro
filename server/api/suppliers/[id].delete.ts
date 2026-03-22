@@ -1,35 +1,15 @@
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { badRequest, internalError, notFound, ok } from "../../utils/response";
+import { deleteSupplier } from "../../services/suppliers/delete-supplier";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  try {
+    await deleteSupplier(getRouterParam(event, "id"));
 
-  if (!id) {
-    setResponseStatus(event, 400);
-    return badRequest("Supplier id is required");
+    setResponseStatus(event, 204);
+    return noContent("Supplier deleted");
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("suppliers")
-    .delete()
-    .eq("id", id)
-    .select("id")
-    .maybeSingle();
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  if (!data) {
-    setResponseStatus(event, 404);
-    return notFound("Supplier not found");
-  }
-
-  return ok(null, {
-    total: 1,
-    message: "Supplier deleted",
-  });
 });

@@ -5,6 +5,7 @@ import {
   ensureRepositorySuccess,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
+import { PRODUCT_RELATION_SELECT } from "./product-select";
 
 type CreateProductInput = z.infer<typeof createProductSchema>;
 
@@ -35,7 +36,7 @@ export async function createProductRecord(
   const { data, error } = await supabase
     .from("products")
     .insert(insertPayload)
-    .select("*")
+    .select(PRODUCT_RELATION_SELECT)
     .single();
 
   ensureRepositorySuccess(error);

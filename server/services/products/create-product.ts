@@ -4,6 +4,8 @@ import { createProductRecord } from "../../repositories/products/create-product"
 import { createProductSchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";
 import { parseProductMultipartFields } from "../../utils/resource-form-data";
+import { mapProduct } from "./map-product";
+import { validateProductReferences } from "./validate-product-references";
 
 export async function createProduct(parts: MultiPartData[]): Promise<Product> {
   let body: ReturnType<typeof parseProductMultipartFields>;
@@ -22,5 +24,9 @@ export async function createProduct(parts: MultiPartData[]): Promise<Product> {
     throw badRequestError(parsedBody.error.message);
   }
 
-  return createProductRecord(parsedBody.data);
+  await validateProductReferences(parsedBody.data);
+
+  const product = await createProductRecord(parsedBody.data);
+
+  return mapProduct(product);
 }

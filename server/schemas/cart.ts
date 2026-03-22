@@ -24,3 +24,9 @@ export const updateCartItemSchema = z.object({
   quantity: z.coerce.number().positive().optional(),
   unit_price: z.coerce.number().min(0).optional(),
 });
+
+export const addCartItemSchema = z.object({
+  customer_id: textIdSchema,
+  product_id: textIdSchema,
+  quantity: z.coerce.number().positive(),
+});

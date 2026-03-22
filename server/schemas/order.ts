@@ -20,6 +20,25 @@ export const createOrderSchema = z.object({
 
 export const updateOrderSchema = createOrderSchema.partial();
 
+export const createOrderRequestItemSchema = z.object({
+  product_id: textIdSchema,
+  quantity: z.coerce.number().positive(),
+});
+
+export const createOrderRequestSchema = z.object({
+  customer_id: textIdSchema,
+  notes: z.string().trim().max(2000).nullable().optional(),
+  items: z.array(createOrderRequestItemSchema).min(1),
+});
+
+export const approveOrderSchema = z.object({
+  approved_by: textIdSchema.nullable().optional(),
+});
+
+export const rejectOrderSchema = z.object({
+  rejection_reason: z.string().trim().min(1).max(500),
+});
+
 export const orderQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().optional(),
   status: orderStatusSchema.or(z.literal("")).optional(),

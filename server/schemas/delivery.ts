@@ -20,6 +20,11 @@ export const createDeliverySchema = z.object({
 
 export const updateDeliverySchema = createDeliverySchema.partial();
 
+export const updateDeliveryStatusSchema = z.object({
+  status: deliveryStatusSchema,
+  delivered_at: z.string().datetime().nullable().optional(),
+});
+
 export const deliveryQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().optional(),
   status: deliveryStatusSchema.or(z.literal("")).optional(),

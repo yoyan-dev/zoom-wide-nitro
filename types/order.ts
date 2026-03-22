@@ -1,4 +1,6 @@
+import type { Customer } from "./customer";
 import type { PaginationMeta, PaginationParams } from "./pagination";
+import type { Product } from "./product";
 
 export type OrderStatus =
   | "pending"
@@ -26,8 +28,15 @@ export interface OrderItem {
   quantity: number;
   unit_price: number;
   line_total: number;
+  product?: Product;
   created_at: string;
   updated_at: string;
+}
+
+export interface OrderDetail extends Order {
+  customer?: Customer;
+  items: OrderItem[];
+  total_items: number;
 }
 
 export interface FetchOrderParams extends PaginationParams {
