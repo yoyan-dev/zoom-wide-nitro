@@ -1,71 +1,135 @@
-import type { H3Response, StatusMessage } from "../../types";
+import type {
+  ApiErrorPayload,
+  ApiErrorResponse,
+  ApiPaginationMeta,
+  ApiSuccessResponse,
+  H3Response,
+  HttpStatusCode,
+  StatusMessage,
+} from "../../types";
 
 type ResponseOptions = {
   total?: number;
   message?: string;
+  meta?: ApiPaginationMeta;
 };
 
-function buildResponse<T>(
-  status: "ok" | "error",
-  statusCode: number,
+type ErrorResponseOptions = {
+  code?: string;
+  details?: unknown;
+};
+
+function buildMeta(options?: ResponseOptions): ApiPaginationMeta | undefined {
+  if (!options?.meta && options?.total === undefined) {
+    return undefined;
+  }
+
+  return {
+    total: options?.meta?.total ?? options?.total,
+    page: options?.meta?.page,
+    limit: options?.meta?.limit,
+    totalPages: options?.meta?.totalPages,
+  };
+}
+
+function buildSuccessResponse<T>(
+  status: "ok",
+  statusCode: HttpStatusCode,
   statusMessage: StatusMessage,
-  data?: T,
+  data: T,
   options?: ResponseOptions,
-): H3Response<T> {
+): ApiSuccessResponse<T> {
   return {
     status,
     statusCode,
     statusMessage,
     data,
     total: options?.total,
+    meta: buildMeta(options),
     message: options?.message,
   };
 }
 
+function buildErrorPayload(
+  statusMessage: StatusMessage,
+  message: string,
+  options?: ErrorResponseOptions,
+): ApiErrorPayload {
+  return {
+    code: options?.code ?? statusMessage ?? undefined,
+    message,
+    details: options?.details,
+  };
+}
+
+function buildErrorResponse(
+  statusCode: HttpStatusCode,
+  statusMessage: StatusMessage,
+  message: string,
+  options?: ErrorResponseOptions,
+): ApiErrorResponse {
+  return {
+    status: "error",
+    statusCode,
+    statusMessage,
+    data: null,
+    message,
+    error: buildErrorPayload(statusMessage, message, options),
+  };
+}
+
+export function success<T>(
+  data: T,
+  options?: ResponseOptions,
+): H3Response<T> {
+  return buildSuccessResponse("ok", 200, "ok", data, options);
+}
+
 export function ok<T>(data: T, options?: ResponseOptions): H3Response<T> {
-  return buildResponse("ok", 200, "ok", data, options);
+  return success(data, options);
 }
 
 export function created<T>(data: T, options?: ResponseOptions): H3Response<T> {
-  return buildResponse("ok", 201, "created", data, options);
+  return buildSuccessResponse("ok", 201, "created", data, options);
+}
+
+export function paginated<T>(
+  data: T,
+  meta: ApiPaginationMeta,
+  options?: Omit<ResponseOptions, "meta" | "total">,
+): H3Response<T> {
+  return ok(data, {
+    ...options,
+    total: meta.total,
+    meta,
+  });
 }
 
 export function noContent(message = "no content"): H3Response<null> {
-  return {
-    status: "ok",
-    statusCode: 204,
-    statusMessage: "no content",
-    data: null,
+  return buildSuccessResponse("ok", 204, "no content", null, {
     message,
-  };
+  });
+}
+
+export function apiError(
+  statusCode: HttpStatusCode,
+  statusMessage: StatusMessage,
+  message: string,
+  options?: ErrorResponseOptions,
+): H3Response<null> {
+  return buildErrorResponse(statusCode, statusMessage, message, options);
 }
 
 export function badRequest(message = "Bad request"): H3Response<null> {
-  return {
-    status: "error",
-    statusCode: 400,
-    statusMessage: "bad request",
-    data: null,
-    message,
-  };
+  return buildErrorResponse(400, "bad request", message);
 }
 
 export function notFound(message = "Not found"): H3Response<null> {
-  return {
-    status: "error",
-    statusCode: 404,
-    statusMessage: "not found",
-    data: null,
-    message,
-  };
+  return buildErrorResponse(404, "not found", message);
 }
 
-export function internalError(message = "Internal server error"): H3Response<null> {
-  return {
-    status: "error",
-    statusCode: 500,
-    statusMessage: "internal server error",
-    data: null,
-    message,
-  };
+export function internalError(
+  message = "Internal server error",
+): H3Response<null> {
+  return buildErrorResponse(500, "internal server error", message);
 }

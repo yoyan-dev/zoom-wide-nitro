@@ -43,4 +43,4 @@ export interface FetchProductParams extends PaginationParams {
   supplier_id?: string;
 }
 
-export interface ProductPaginaton extends PaginationMeta {}
+export interface ProductPagination extends PaginationMeta {}

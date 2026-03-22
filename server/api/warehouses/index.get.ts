@@ -1,48 +1,25 @@
-import { defineEventHandler, getQuery, setResponseStatus } from "h3";
-import type { Warehouse } from "../../../types";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { warehouseQuerySchema } from "../../schemas";
-import { getPagination } from "../../utils/pagination";
-import { badRequest, internalError, ok } from "../../utils/response";
+import { defineEventHandler } from "h3";
+import { listWarehouses } from "../../services/warehouses/list-warehouses";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { parseQuery } from "../../utils/query";
+import { paginated } from "../../utils/response";
+import { number, optional, string } from "../../utils/validator";
 
 export default defineEventHandler(async (event) => {
-  const parsedQuery = warehouseQuerySchema.safeParse(getQuery(event));
+  try {
+    const query = parseQuery(event, {
+      q: (value) => optional(value, (current) => string(current, "q")),
+      status: (value) =>
+        optional(value, (current) => string(current, "status")),
+      page: (value) => optional(value, (current) => number(current, "page")) ?? 1,
+      limit: (value) =>
+        optional(value, (current) => number(current, "limit")) ?? 10,
+    });
 
-  if (!parsedQuery.success) {
-    setResponseStatus(event, 400);
-    return badRequest(parsedQuery.error.message);
+    const result = await listWarehouses(query);
+
+    return paginated(result.data, result.meta);
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const { q, status, page, limit } = parsedQuery.data;
-  const { from, to } = getPagination({ page, limit });
-  const supabase = getSupabaseAdmin();
-
-  let query = supabase
-    .from("warehouses")
-    .select("*", { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range(from, to);
-
-  if (q) {
-    query = query.or(
-      [`id.ilike.%${q}%`, `name.ilike.%${q}%`, `address.ilike.%${q}%`].join(
-        ",",
-      ),
-    );
-  }
-
-  if (status) {
-    query = query.eq("status", status);
-  }
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  return ok((data ?? []) as Warehouse[], {
-    total: count ?? 0,
-  });
 });

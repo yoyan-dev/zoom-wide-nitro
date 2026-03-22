@@ -1,33 +1,16 @@
-import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { getSupabaseAdmin } from "../../lib/supabase";
-import { badRequest, internalError, notFound, ok } from "../../utils/response";
+import { defineEventHandler, getRouterParam } from "h3";
+import { getSupplierById } from "../../services/suppliers/get-supplier-by-id";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  try {
+    const supplier = await getSupplierById(getRouterParam(event, "id"));
 
-  if (!id) {
-    setResponseStatus(event, 400);
-    return badRequest("Supplier id is required");
+    return ok(supplier, {
+      total: 1,
+    });
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("suppliers")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) {
-    setResponseStatus(event, 500);
-    return internalError(error.message);
-  }
-
-  if (!data) {
-    setResponseStatus(event, 404);
-    return notFound("Supplier not found");
-  }
-
-  return ok(data || {}, {
-    total: 1,
-  });
 });
