@@ -9,6 +9,12 @@ export type OrderStatus =
   | "cancelled"
   | "completed";
 
+export interface OrderReportSummary {
+  totalMatchingOrders: number;
+  totalSalesAmount: number;
+  countsByStatus: Record<OrderStatus, number>;
+}
+
 export interface Order {
   id: string;
   customer_id: string;
@@ -43,6 +49,8 @@ export interface FetchOrderParams extends PaginationParams {
   q?: string;
   status?: OrderStatus | "";
   customer_id?: string;
+  from?: string;
+  to?: string;
 }
 
 export interface OrderPagination extends PaginationMeta {}

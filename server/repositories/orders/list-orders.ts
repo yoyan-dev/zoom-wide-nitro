@@ -5,14 +5,12 @@ import {
   mapListResult,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
+import { applyOrderReportFilters, type OrderReportFilters } from "./apply-order-report-filters";
 import { ORDER_DETAIL_SELECT } from "./order-select";
 
-export type ListOrderRecordsParams = {
-  q?: string;
-  status?: string;
-  customer_id?: string;
-  from: number;
-  to: number;
+export type ListOrderRecordsParams = OrderReportFilters & {
+  rangeFrom: number;
+  rangeTo: number;
 };
 
 export async function listOrderRecords(
@@ -24,21 +22,9 @@ export async function listOrderRecords(
     .from("orders")
     .select(ORDER_DETAIL_SELECT, { count: "exact" })
     .order("created_at", { ascending: false })
-    .range(params.from, params.to);
+    .range(params.rangeFrom, params.rangeTo);
 
-  if (params.q) {
-    query = query.or(
-      [`id.ilike.%${params.q}%`, `notes.ilike.%${params.q}%`].join(","),
-    );
-  }
-
-  if (params.status) {
-    query = query.eq("status", params.status);
-  }
-
-  if (params.customer_id) {
-    query = query.eq("customer_id", params.customer_id);
-  }
+  query = applyOrderReportFilters(query, params);
 
   const { data, error, count } = await query;
 

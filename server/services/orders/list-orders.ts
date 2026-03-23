@@ -1,21 +1,15 @@
 import type { Order, PaginatedResult } from "../../../types";
 import { listOrderRecords } from "../../repositories/orders/list-orders";
-import { badRequestError } from "../../utils/errors";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
+import { assertValidOrderReportStatus } from "./order-reporting";
 import { mapOrder } from "./map-order";
-
-const ORDER_STATUSES = new Set([
-  "pending",
-  "approved",
-  "rejected",
-  "cancelled",
-  "completed",
-]);
 
 export type ListOrdersParams = {
   q?: string;
   status?: string;
   customer_id?: string;
+  from?: string;
+  to?: string;
   page?: number;
   limit?: number;
 };
@@ -23,9 +17,7 @@ export type ListOrdersParams = {
 export async function listOrders(
   params: ListOrdersParams,
 ): Promise<PaginatedResult<Order[]>> {
-  if (params.status && !ORDER_STATUSES.has(params.status)) {
-    throw badRequestError("status must be a valid order status");
-  }
+  const status = assertValidOrderReportStatus(params.status);
 
   const pagination = getPagination({
     page: params.page,
@@ -34,10 +26,12 @@ export async function listOrders(
 
   const result = await listOrderRecords({
     q: params.q,
-    status: params.status,
+    status,
     customer_id: params.customer_id,
-    from: pagination.from,
-    to: pagination.to,
+    from: params.from,
+    to: params.to,
+    rangeFrom: pagination.from,
+    rangeTo: pagination.to,
   });
 
   return {

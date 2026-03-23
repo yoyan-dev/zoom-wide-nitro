@@ -1,4 +1,5 @@
 import type { Category } from "./category";
+import type { InventoryStockItem } from "./inventory";
 import type { PaginationMeta, PaginationParams } from "./pagination";
 import type { Supplier } from "./supplier";
 import type { Warehouse } from "./warehouse";
@@ -41,6 +42,27 @@ export interface FetchProductParams extends PaginationParams {
   q?: string;
   category_id?: string;
   supplier_id?: string;
+}
+
+export interface ProductSalesInsight {
+  productId: string;
+  totalQuantitySold: number;
+  totalRevenue: number;
+  orderItemCount: number;
+  product?: Product;
+}
+
+export interface ProductCategoryCount {
+  categoryId: string | null;
+  categoryName: string;
+  productCount: number;
+}
+
+export interface ProductInsights {
+  lowStockProducts: InventoryStockItem[];
+  recentProducts: Product[];
+  topSellingProducts: ProductSalesInsight[];
+  productsByCategory: ProductCategoryCount[];
 }
 
 export interface ProductPagination extends PaginationMeta {}

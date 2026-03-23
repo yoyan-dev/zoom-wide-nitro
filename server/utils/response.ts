@@ -5,7 +5,9 @@ import type {
   ApiSuccessResponse,
   H3Response,
   HttpStatusCode,
+  NumericSummary,
   StatusMessage,
+  SummaryResponse,
 } from "../../types";
 
 type ResponseOptions = {
@@ -103,6 +105,16 @@ export function paginated<T>(
     total: meta.total,
     meta,
   });
+}
+
+export function summary<TSummary extends NumericSummary>(
+  data: SummaryResponse<TSummary> | TSummary,
+  options?: Omit<ResponseOptions, "meta" | "total">,
+): H3Response<SummaryResponse<TSummary>> {
+  const normalizedData =
+    "summary" in data ? data : ({ summary: data } as SummaryResponse<TSummary>);
+
+  return ok(normalizedData, options);
 }
 
 export function noContent(message = "no content"): H3Response<null> {

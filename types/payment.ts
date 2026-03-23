@@ -8,6 +8,15 @@ export type PaymentMethod =
 
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 
+export interface PaymentReportSummary {
+  totalMatchingPayments: number;
+  totalPaidAmount: number;
+  pendingPaymentsCount: number;
+  failedPaymentsCount: number;
+  refundedPaymentsCount: number;
+  countsByStatus: Record<PaymentStatus, number>;
+}
+
 export interface Payment {
   id: string;
   order_id: string;
@@ -25,6 +34,8 @@ export interface FetchPaymentParams extends PaginationParams {
   status?: PaymentStatus | "";
   method?: PaymentMethod | "";
   order_id?: string;
+  from?: string;
+  to?: string;
 }
 
 export interface PaymentPagination extends PaginationMeta {}

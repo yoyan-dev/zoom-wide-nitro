@@ -37,6 +37,7 @@ const PERMISSION_MATRIX = {
     "auditor",
   ],
   "products:write": ["admin", "manager", "warehouse_manager"],
+  "products:insights": ["admin", "manager", "warehouse_manager"],
   "customers:read": ["admin", "manager", "staff", "finance", "auditor"],
   "customers:write": ["admin", "manager", "staff"],
   "cart:read": ["admin", "manager", "staff", "customer", "auditor"],
@@ -50,6 +51,7 @@ const PERMISSION_MATRIX = {
     "driver",
     "auditor",
   ],
+  "orders:report": ["admin", "manager", "staff", "finance", "auditor"],
   "orders:write": ["admin", "manager", "staff"],
   "orders:review": ["admin", "manager"],
   "deliveries:read": [
@@ -60,6 +62,7 @@ const PERMISSION_MATRIX = {
     "finance",
     "auditor",
   ],
+  "deliveries:report": ["admin", "manager", "staff", "auditor"],
   "deliveries:write": ["admin", "manager"],
   "deliveries:status": ["admin", "manager", "driver"],
   "inventory:read": [
@@ -70,10 +73,13 @@ const PERMISSION_MATRIX = {
     "finance",
     "auditor",
   ],
+  "inventory:report": ["admin", "manager", "warehouse_manager", "auditor"],
   "inventory:write": ["admin", "manager", "warehouse_manager"],
-  "payments:read": ["admin", "manager", "customer", "finance", "auditor"],
+  "payments:read": ["admin", "manager", "finance", "auditor"],
+  "payments:report": ["admin", "finance", "auditor"],
   "payments:write": ["admin", "finance"],
   "payments:status": ["admin", "finance"],
+  "dashboard:read": ["admin", "manager"],
   "admin:ops": ["admin"],
 } as const satisfies Record<string, readonly UserRole[]>;
 

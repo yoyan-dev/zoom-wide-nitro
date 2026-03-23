@@ -1,12 +1,17 @@
 import { defineEventHandler } from "h3";
-import { listDeliveries } from "../../services/deliveries/list-deliveries";
+import { listPayments } from "../../services/payments/list-payments";
 import {
-  DELIVERY_REPORT_STATUSES,
-  requireDeliveryReportAccess,
-} from "../../services/deliveries/delivery-reporting";
+  PAYMENT_REPORT_METHODS,
+  PAYMENT_REPORT_STATUSES,
+  requirePaymentReportAccess,
+} from "../../services/payments/payment-reporting";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { parseQuery } from "../../utils/query";
-import { parseDateRange, parseReportPagination, parseStatusFilter } from "../../utils/reporting";
+import {
+  parseDateRange,
+  parseReportPagination,
+  parseStatusFilter,
+} from "../../utils/reporting";
 import { paginated } from "../../utils/response";
 import { optional, string } from "../../utils/validator";
 
@@ -16,23 +21,19 @@ export default defineEventHandler(async (event) => {
       q: (value) => optional(value, (current) => string(current, "q")),
       order_id: (value) =>
         optional(value, (current) => string(current, "order_id")),
-      driver_id: (value) =>
-        optional(value, (current) => string(current, "driver_id")),
     });
-    const status = parseStatusFilter(event, DELIVERY_REPORT_STATUSES);
+    const status = parseStatusFilter(event, PAYMENT_REPORT_STATUSES);
+    const method = parseStatusFilter(event, PAYMENT_REPORT_METHODS, "method");
     const dateRange = parseDateRange(event);
     const pagination = parseReportPagination(event);
 
-    await requireDeliveryReportAccess(event, {
-      orderId: query.order_id,
-      driverId: query.driver_id,
-    });
+    await requirePaymentReportAccess(event, query.order_id);
 
-    const result = await listDeliveries({
+    const result = await listPayments({
       q: query.q,
       status,
+      method,
       order_id: query.order_id,
-      driver_id: query.driver_id,
       from: dateRange.from,
       to: dateRange.to,
       page: pagination.page,

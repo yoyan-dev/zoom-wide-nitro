@@ -5,13 +5,15 @@ import {
   mapListResult,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
+import {
+  applyStockReportFilters,
+  type InventoryStockReportFilters,
+} from "./apply-stock-report-filters";
 import { PRODUCT_RELATION_SELECT } from "../products/product-select";
 
-export type ListStockViewRecordsParams = {
-  q?: string;
-  product_id?: string;
-  from: number;
-  to: number;
+export type ListStockViewRecordsParams = InventoryStockReportFilters & {
+  rangeFrom?: number;
+  rangeTo?: number;
 };
 
 export async function listStockViewRecords(
@@ -22,22 +24,13 @@ export async function listStockViewRecords(
   let query = supabase
     .from("products")
     .select(PRODUCT_RELATION_SELECT, { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range(params.from, params.to);
+    .order("created_at", { ascending: false });
 
-  if (params.q) {
-    query = query.or(
-      [
-        `sku.ilike.%${params.q}%`,
-        `name.ilike.%${params.q}%`,
-        `description.ilike.%${params.q}%`,
-      ].join(","),
-    );
+  if (params.rangeFrom !== undefined && params.rangeTo !== undefined) {
+    query = query.range(params.rangeFrom, params.rangeTo);
   }
 
-  if (params.product_id) {
-    query = query.eq("id", params.product_id);
-  }
+  query = applyStockReportFilters(query, params);
 
   const { data, error, count } = await query;
 

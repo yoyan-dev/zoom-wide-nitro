@@ -1,22 +1,16 @@
 import type { Delivery, PaginatedResult } from "../../../types";
 import { listDeliveryRecords } from "../../repositories/deliveries/list-deliveries";
-import { badRequestError } from "../../utils/errors";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
+import { assertValidDeliveryReportStatus } from "./delivery-reporting";
 import { mapDelivery } from "./map-delivery";
-
-const DELIVERY_STATUSES = new Set([
-  "scheduled",
-  "in_transit",
-  "delivered",
-  "failed",
-  "cancelled",
-]);
 
 export type ListDeliveriesParams = {
   q?: string;
   status?: string;
   order_id?: string;
   driver_id?: string;
+  from?: string;
+  to?: string;
   page?: number;
   limit?: number;
 };
@@ -24,9 +18,7 @@ export type ListDeliveriesParams = {
 export async function listDeliveries(
   params: ListDeliveriesParams,
 ): Promise<PaginatedResult<Delivery[]>> {
-  if (params.status && !DELIVERY_STATUSES.has(params.status)) {
-    throw badRequestError("status must be a valid delivery status");
-  }
+  const status = assertValidDeliveryReportStatus(params.status);
 
   const pagination = getPagination({
     page: params.page,
@@ -35,11 +27,13 @@ export async function listDeliveries(
 
   const result = await listDeliveryRecords({
     q: params.q,
-    status: params.status,
+    status,
     order_id: params.order_id,
     driver_id: params.driver_id,
-    from: pagination.from,
-    to: pagination.to,
+    from: params.from,
+    to: params.to,
+    rangeFrom: pagination.from,
+    rangeTo: pagination.to,
   });
 
   return {
