@@ -1,17 +1,20 @@
-import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requireRole } from "../../middleware/admin";
-import { getCustomerService } from "../../services/customer.service";
+import { defineEventHandler, getRouterParam } from "h3";
+import { requireCustomerAccess } from "../../services/customers/require-customer-access";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  await requireRole(event, ["admin", "manager", "staff", "finance", "customer"]);
+  try {
+    const customer = await requireCustomerAccess(
+      event,
+      getRouterParam(event, "id"),
+      "customers:read",
+    );
 
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Missing customer id.",
+    return ok(customer, {
+      total: 1,
     });
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  return getCustomerService(event, id);
 });

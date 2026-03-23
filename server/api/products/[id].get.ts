@@ -1,17 +1,16 @@
-import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requirePermission } from "../../middleware/admin";
-import { getProductService } from "../../services/product.service";
+import { defineEventHandler, getRouterParam } from "h3";
+import { getProductById } from "../../services/products/get-product-by-id";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  await requirePermission(event, "products.read");
+  try {
+    const product = await getProductById(getRouterParam(event, "id"));
 
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Missing product id.",
+    return ok(product, {
+      total: 1,
     });
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  return getProductService(event, id);
 });

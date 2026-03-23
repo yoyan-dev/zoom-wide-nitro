@@ -10,6 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["node"],
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "~/*": ["./*"],
@@ -20,6 +21,6 @@
     "nitro.config.ts",
     "server/**/*.ts",
     "server/**/*.d.ts",
-    "shared/**/*.ts"
+    "types/**/*.ts"
   ]
 }

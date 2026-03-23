@@ -1,17 +1,19 @@
-import { createError, defineEventHandler, getRouterParam } from "h3";
-import { requirePermission } from "../../middleware/admin";
-import { getCategoryService } from "../../services/category.service";
+import {
+  defineEventHandler,
+  getRouterParam,
+} from "h3";
+import { getCategoryById } from "../../services/categories/get-category-by-id";
+import { handleRouteError } from "../../utils/handle-route-error";
+import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
-  await requirePermission(event, "categories.read");
+  try {
+    const category = await getCategoryById(getRouterParam(event, "id"));
 
-  const id = getRouterParam(event, "id");
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Missing category id.",
+    return ok(category, {
+      total: 1,
     });
+  } catch (error) {
+    return handleRouteError(event, error);
   }
-
-  return getCategoryService(event, id);
 });
