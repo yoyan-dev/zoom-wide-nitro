@@ -1,12 +1,15 @@
 import { defineEventHandler } from "h3";
 import { getStockView } from "../../services/inventory/get-stock-view";
 import { handleRouteError } from "../../utils/handle-route-error";
+import { requirePermission } from "../../utils/permissions";
 import { parseQuery } from "../../utils/query";
 import { paginated } from "../../utils/response";
 import { number, optional, string } from "../../utils/validator";
 
 export default defineEventHandler(async (event) => {
   try {
+    requirePermission(event, "inventory:read");
+
     const query = parseQuery(event, {
       q: (value) => optional(value, (current) => string(current, "q")),
       product_id: (value) =>

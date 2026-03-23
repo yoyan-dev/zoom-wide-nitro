@@ -1,11 +1,15 @@
 import { defineEventHandler, getRouterParam } from "h3";
-import { getCustomerById } from "../../services/customers/get-customer-by-id";
+import { requireCustomerAccess } from "../../services/customers/require-customer-access";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    const customer = await getCustomerById(getRouterParam(event, "id"));
+    const customer = await requireCustomerAccess(
+      event,
+      getRouterParam(event, "id"),
+      "customers:read",
+    );
 
     return ok(customer, {
       total: 1,

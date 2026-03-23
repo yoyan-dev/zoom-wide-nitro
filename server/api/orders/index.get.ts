@@ -1,6 +1,8 @@
 import { defineEventHandler } from "h3";
+import { requireCustomerAccess } from "../../services/customers/require-customer-access";
 import { listOrders } from "../../services/orders/list-orders";
 import { handleRouteError } from "../../utils/handle-route-error";
+import { requirePermission } from "../../utils/permissions";
 import { parseQuery } from "../../utils/query";
 import { paginated } from "../../utils/response";
 import { number, optional, string } from "../../utils/validator";
@@ -16,6 +18,12 @@ export default defineEventHandler(async (event) => {
       limit: (value) =>
         optional(value, (current) => number(current, "limit")) ?? 10,
     });
+
+    if (query.customer_id) {
+      await requireCustomerAccess(event, query.customer_id, "orders:read");
+    } else {
+      requirePermission(event, "orders:read");
+    }
 
     const result = await listOrders(query);
 

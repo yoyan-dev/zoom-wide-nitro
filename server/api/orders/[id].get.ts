@@ -1,11 +1,15 @@
 import { defineEventHandler, getRouterParam } from "h3";
-import { getOrderById } from "../../services/orders/get-order-by-id";
+import { requireOrderAccess } from "../../services/orders/require-order-access";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    const order = await getOrderById(getRouterParam(event, "id"));
+    const order = await requireOrderAccess(
+      event,
+      getRouterParam(event, "id"),
+      "orders:read",
+    );
 
     return ok(order, {
       total: 1,

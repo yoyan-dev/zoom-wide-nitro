@@ -1,4 +1,8 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  type SupabaseClient,
+  type User as SupabaseAuthUser,
+} from "@supabase/supabase-js";
 import { useRuntimeConfig } from "nitropack/runtime";
 
 let supabaseAdmin: SupabaseClient | null = null;
@@ -42,4 +46,17 @@ export function getSupabaseAdmin(): SupabaseClient {
 
 export function getSupabaseRepositoryClient(): SupabaseClient {
   return getSupabaseAdmin();
+}
+
+export async function getSupabaseAuthUser(
+  accessToken: string,
+): Promise<SupabaseAuthUser | null> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase.auth.getUser(accessToken);
+
+  if (error || !data.user) {
+    return null;
+  }
+
+  return data.user;
 }

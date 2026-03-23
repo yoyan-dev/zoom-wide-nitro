@@ -100,6 +100,14 @@ export function badRequestError(message = "Bad request") {
   return new AppError("bad_request", message);
 }
 
+export function unauthorizedError(message = "Unauthorized") {
+  return new AppError("unauthorized", message);
+}
+
+export function forbiddenError(message = "Forbidden") {
+  return new AppError("forbidden", message);
+}
+
 export function notFoundError(message = "Not found") {
   return new AppError("not_found", message);
 }

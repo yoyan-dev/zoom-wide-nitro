@@ -1,35 +1,105 @@
 import { getHeader, type H3Event } from "h3";
 import type { UserRole } from "../../types/user";
+import { unauthorizedError } from "./errors";
 
-export type RequestUser = {
+export type AuthenticatedRequestUser = {
   id: string;
   role: UserRole | null;
   email: string | null;
+  roleSource: "users_table" | "auth_metadata" | "none";
+  isActive: boolean | null;
 };
 
-export function getRequestUser(event: H3Event): RequestUser | null {
-  const id = getHeader(event, "x-user-id");
+export type RequestAuthContext = {
+  token: string | null;
+  user: AuthenticatedRequestUser | null;
+  status: "anonymous" | "authenticated" | "invalid";
+  error: string | null;
+};
 
-  if (!id) {
+const USER_ROLES: UserRole[] = [
+  "admin",
+  "manager",
+  "staff",
+  "customer",
+  "warehouse_manager",
+  "finance",
+  "driver",
+  "supplier",
+  "auditor",
+];
+
+export function isUserRole(value: unknown): value is UserRole {
+  return typeof value === "string" && USER_ROLES.includes(value as UserRole);
+}
+
+export function extractBearerToken(event: H3Event): string | null {
+  const authorization = getHeader(event, "authorization");
+
+  if (!authorization) {
     return null;
   }
 
-  const roleHeader = getHeader(event, "x-user-role");
-  const email = getHeader(event, "x-user-email") ?? null;
+  const [scheme, token] = authorization.split(" ");
 
+  if (scheme?.toLowerCase() !== "bearer" || !token?.trim()) {
+    return null;
+  }
+
+  return token.trim();
+}
+
+export function getAnonymousAuthContext(): RequestAuthContext {
   return {
-    id,
-    role: (roleHeader as UserRole | null) ?? null,
-    email,
+    token: null,
+    user: null,
+    status: "anonymous",
+    error: null,
   };
 }
 
-export function requireRequestUser(event: H3Event): RequestUser {
-  const user = getRequestUser(event);
+export function getInvalidAuthContext(
+  token: string | null,
+  message = "Invalid authentication token",
+): RequestAuthContext {
+  return {
+    token,
+    user: null,
+    status: "invalid",
+    error: message,
+  };
+}
 
-  if (!user) {
-    throw new Error("Unauthorized");
+export function getAuthenticatedAuthContext(input: {
+  token: string;
+  user: AuthenticatedRequestUser;
+}): RequestAuthContext {
+  return {
+    token: input.token,
+    user: input.user,
+    status: "authenticated",
+    error: null,
+  };
+}
+
+export function getRequestAuth(event: H3Event): RequestAuthContext {
+  return event.context.auth ?? getAnonymousAuthContext();
+}
+
+export function getRequestUser(event: H3Event): AuthenticatedRequestUser | null {
+  return getRequestAuth(event).user;
+}
+
+export function requireRequestUser(event: H3Event): AuthenticatedRequestUser {
+  const auth = getRequestAuth(event);
+
+  if (auth.status === "invalid") {
+    throw unauthorizedError(auth.error ?? "Invalid authentication token");
   }
 
-  return user;
+  if (!auth.user) {
+    throw unauthorizedError("Authentication required");
+  }
+
+  return auth.user;
 }

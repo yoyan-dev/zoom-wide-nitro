@@ -1,5 +1,6 @@
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { removeCartItem } from "../../../services/cart/remove-cart-item";
+import { requireCartWriteAccess } from "../../../services/cart/require-cart-access";
 import { handleRouteError } from "../../../utils/handle-route-error";
 import { parseQuery } from "../../../utils/query";
 import { noContent } from "../../../utils/response";
@@ -10,6 +11,8 @@ export default defineEventHandler(async (event) => {
     const query = parseQuery(event, {
       customer_id: (value) => string(value, "customer_id"),
     });
+
+    await requireCartWriteAccess(event, query.customer_id);
 
     await removeCartItem({
       customer_id: query.customer_id,

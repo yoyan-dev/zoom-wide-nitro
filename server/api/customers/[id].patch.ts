@@ -1,12 +1,17 @@
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { updateCustomer } from "../../services/customers/update-customer";
+import { requireCustomerAccess } from "../../services/customers/require-customer-access";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
+    const customerId = getRouterParam(event, "id");
+
+    await requireCustomerAccess(event, customerId, "customers:write");
+
     const customer = await updateCustomer({
-      id: getRouterParam(event, "id"),
+      id: customerId,
       input: await readBody(event),
     });
 

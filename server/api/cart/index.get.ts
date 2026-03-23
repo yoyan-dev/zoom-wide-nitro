@@ -1,5 +1,6 @@
 import { defineEventHandler } from "h3";
 import { getActiveCart } from "../../services/cart/get-active-cart";
+import { requireCartReadAccess } from "../../services/cart/require-cart-access";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { parseQuery } from "../../utils/query";
 import { ok } from "../../utils/response";
@@ -10,6 +11,8 @@ export default defineEventHandler(async (event) => {
     const query = parseQuery(event, {
       customer_id: (value) => string(value, "customer_id"),
     });
+
+    await requireCartReadAccess(event, query.customer_id);
 
     const cart = await getActiveCart(query.customer_id);
 

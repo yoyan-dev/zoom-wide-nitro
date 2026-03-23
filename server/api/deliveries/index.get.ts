@@ -1,4 +1,5 @@
 import { defineEventHandler } from "h3";
+import { requireDeliveryListAccess } from "../../services/deliveries/require-delivery-list-access";
 import { listDeliveries } from "../../services/deliveries/list-deliveries";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { parseQuery } from "../../utils/query";
@@ -17,6 +18,11 @@ export default defineEventHandler(async (event) => {
       page: (value) => optional(value, (current) => number(current, "page")) ?? 1,
       limit: (value) =>
         optional(value, (current) => number(current, "limit")) ?? 10,
+    });
+
+    await requireDeliveryListAccess(event, {
+      orderId: query.order_id,
+      driverId: query.driver_id,
     });
 
     const result = await listDeliveries(query);
