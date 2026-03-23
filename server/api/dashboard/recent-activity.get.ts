@@ -1,14 +1,14 @@
 import { defineEventHandler } from "h3";
-import { requireDashboardReportAccess } from "../../services/dashboard/dashboard-reporting";
 import { getDashboardRecentActivity } from "../../services/dashboard/get-dashboard-recent-activity";
 import { handleRouteError } from "../../utils/handle-route-error";
+import { requirePermission } from "../../utils/permissions";
 import { parseQuery } from "../../utils/query";
 import { ok } from "../../utils/response";
 import { number, optional } from "../../utils/validator";
 
 export default defineEventHandler(async (event) => {
   try {
-    requireDashboardReportAccess(event);
+    requirePermission(event, "dashboard:read");
 
     const query = parseQuery(event, {
       limit: (value) => optional(value, (current) => number(current, "limit")),

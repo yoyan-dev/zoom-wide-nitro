@@ -1,12 +1,12 @@
 import { defineEventHandler } from "h3";
-import { requireDashboardReportAccess } from "../../services/dashboard/dashboard-reporting";
 import { getDashboardSummary } from "../../services/dashboard/get-dashboard-summary";
 import { handleRouteError } from "../../utils/handle-route-error";
+import { requirePermission } from "../../utils/permissions";
 import { summary } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    requireDashboardReportAccess(event);
+    requirePermission(event, "dashboard:read");
 
     const dashboardSummary = await getDashboardSummary();
 

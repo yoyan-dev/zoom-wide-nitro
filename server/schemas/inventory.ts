@@ -3,7 +3,7 @@ import { paginationQuerySchema, textIdSchema } from "./common";
 
 export const inventoryMovementTypeSchema = z.enum(["in", "out", "adjustment"]);
 
-export const createInventoryLogSchema = z.object({
+const inventoryLogSchemaFields = z.object({
   product_id: textIdSchema,
   movement_type: inventoryMovementTypeSchema,
   quantity_change: z.coerce.number(),
@@ -11,7 +11,12 @@ export const createInventoryLogSchema = z.object({
   reference_id: z.string().trim().min(1).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
   created_by: textIdSchema.nullable().optional(),
-}).superRefine((data, ctx) => {
+});
+
+function applyInventoryLogRules(
+  data: z.infer<typeof inventoryLogSchemaFields>,
+  ctx: z.RefinementCtx,
+) {
   const hasReferenceType = Boolean(data.reference_type);
   const hasReferenceId = Boolean(data.reference_id);
 
@@ -21,6 +26,10 @@ export const createInventoryLogSchema = z.object({
       path: hasReferenceType ? ["reference_id"] : ["reference_type"],
       message: "reference_type and reference_id must be provided together",
     });
+  }
+
+  if (data.movement_type === undefined || data.quantity_change === undefined) {
+    return;
   }
 
   if (data.movement_type === "adjustment") {
@@ -42,9 +51,15 @@ export const createInventoryLogSchema = z.object({
       message: "quantity_change must be greater than zero",
     });
   }
-});
+}
 
-export const updateInventoryLogSchema = createInventoryLogSchema.partial();
+export const createInventoryLogSchema = inventoryLogSchemaFields.superRefine(
+  applyInventoryLogRules,
+);
+
+export const updateInventoryLogSchema = inventoryLogSchemaFields
+  .partial()
+  .superRefine(applyInventoryLogRules);
 
 export const inventoryQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().optional(),
