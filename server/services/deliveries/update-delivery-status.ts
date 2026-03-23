@@ -2,10 +2,11 @@ import type { Delivery, DeliveryStatus } from "../../../types";
 import { getDeliveryByIdRecord } from "../../repositories/deliveries/get-delivery-by-id";
 import { updateDeliveryRecord } from "../../repositories/deliveries/update-delivery";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
-import { updateOrderRecord } from "../../repositories/orders/update-order";
+import { transitionOrderStatusRecord } from "../../repositories/orders/transition-order-status";
 import { updateDeliveryStatusSchema } from "../../schemas";
 import { badRequestError, notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";
+import { requireOrderEligibleForDeliveryUpdate } from "../orders/order-workflow-rules";
 import { mapDelivery } from "./map-delivery";
 
 const DELIVERY_TRANSITIONS: Record<DeliveryStatus, DeliveryStatus[]> = {
@@ -20,8 +21,7 @@ function canTransitionDeliveryStatus(
   currentStatus: DeliveryStatus,
   nextStatus: DeliveryStatus,
 ) {
-  return currentStatus === nextStatus
-    || DELIVERY_TRANSITIONS[currentStatus].includes(nextStatus);
+  return DELIVERY_TRANSITIONS[currentStatus].includes(nextStatus);
 }
 
 export async function updateDeliveryStatus(
@@ -45,18 +45,17 @@ export async function updateDeliveryStatus(
     throw badRequestError("Invalid delivery status transition");
   }
 
-  const order = await getOrderByIdRecord(delivery.order_id);
-
-  if (!order) {
-    throw notFoundError("Order not found");
-  }
-
   if (
-    ["scheduled", "in_transit", "delivered"].includes(parsedInput.data.status)
-    && !["approved", "completed"].includes(order.status)
+    parsedInput.data.status !== "delivered"
+    && parsedInput.data.delivered_at !== undefined
+    && parsedInput.data.delivered_at !== null
   ) {
-    throw badRequestError("Order is not eligible for delivery updates");
+    throw badRequestError("delivered_at can only be set when status is delivered");
   }
+
+  const order = requireOrderEligibleForDeliveryUpdate(
+    await getOrderByIdRecord(delivery.order_id),
+  );
 
   const nextDeliveredAt =
     parsedInput.data.status === "delivered"
@@ -72,10 +71,44 @@ export async function updateDeliveryStatus(
     throw notFoundError("Delivery not found");
   }
 
-  if (parsedInput.data.status === "delivered" && order.status !== "completed") {
-    await updateOrderRecord(order.id, {
-      status: "completed",
+  if (parsedInput.data.status === "delivered") {
+    const completedOrder = await transitionOrderStatusRecord(order.id, {
+      currentStatus: "approved",
+      nextStatus: "completed",
     });
+
+    if (!completedOrder) {
+      const latestOrder = await getOrderByIdRecord(order.id);
+
+      if (latestOrder?.status === "completed") {
+        const refreshedDelivery = await getDeliveryByIdRecord(deliveryId);
+
+        if (!refreshedDelivery) {
+          throw notFoundError("Delivery not found");
+        }
+
+        return mapDelivery(refreshedDelivery);
+      }
+
+      try {
+        await updateDeliveryRecord(deliveryId, {
+          status: delivery.status,
+          delivered_at: delivery.delivered_at,
+        });
+      } catch {
+        // Best-effort rollback only. Preserve the delivery completion error.
+      }
+
+      throw badRequestError("Order is not eligible for delivery completion");
+    }
+
+    const refreshedDelivery = await getDeliveryByIdRecord(deliveryId);
+
+    if (!refreshedDelivery) {
+      throw notFoundError("Delivery not found");
+    }
+
+    return mapDelivery(refreshedDelivery);
   }
 
   return mapDelivery(updatedDelivery);

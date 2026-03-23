@@ -1,17 +1,17 @@
 import type { Order, Product } from "../../../types";
-import { createInventoryLogRecord } from "../../repositories/inventory/create-inventory-log";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
-import { updateOrderRecord } from "../../repositories/orders/update-order";
+import { transitionOrderStatusRecord } from "../../repositories/orders/transition-order-status";
 import { getProductByIdRecord } from "../../repositories/products/get-product-by-id";
-import { updateProductRecord } from "../../repositories/products/update-product";
 import { approveOrderSchema } from "../../schemas";
 import { badRequestError, notFoundError } from "../../utils/errors";
-import { string } from "../../utils/validator";
+import { createInventoryLog } from "../inventory/create-inventory-log";
+import { getOrderForDecision } from "./get-order-for-decision";
 import { mapOrder } from "./map-order";
 
 type OrderApprovalItem = {
   product: Product;
   quantity: number;
+  currentStock: number;
 };
 
 export async function approveOrder(
@@ -24,79 +24,117 @@ export async function approveOrder(
     throw badRequestError(parsedInput.error.message);
   }
 
-  const orderId = string(id, "Order id");
-
-  const order = await getOrderByIdRecord(orderId);
-
-  if (!order) {
-    throw notFoundError("Order not found");
-  }
-
-  const mappedOrder = mapOrder(order);
-
-  if (mappedOrder.status !== "pending") {
-    throw badRequestError("Only pending orders can be approved");
-  }
+  const mappedOrder = await getOrderForDecision(id);
+  const orderId = mappedOrder.id;
 
   if (mappedOrder.items.length === 0) {
     throw badRequestError("Order must contain at least one item");
   }
 
-  const approvalItems: OrderApprovalItem[] = [];
+  const aggregatedQuantities = new Map<string, number>();
 
   for (const item of mappedOrder.items) {
-    const product = await getProductByIdRecord(item.product_id);
+    if (item.quantity <= 0) {
+      throw badRequestError(`Invalid quantity for product: ${item.product_id}`);
+    }
+
+    aggregatedQuantities.set(
+      item.product_id,
+      (aggregatedQuantities.get(item.product_id) ?? 0) + item.quantity,
+    );
+  }
+
+  const approvalItems: OrderApprovalItem[] = [];
+
+  for (const [productId, quantity] of aggregatedQuantities.entries()) {
+    const product = await getProductByIdRecord(productId);
 
     if (!product) {
-      throw notFoundError(`Product not found: ${item.product_id}`);
+      throw notFoundError(`Product not found: ${productId}`);
     }
 
     if (product.is_active === false) {
-      throw badRequestError(`Product is inactive: ${item.product_id}`);
+      throw badRequestError(`Product is inactive: ${productId}`);
     }
 
     const stockQuantity = product.stock_quantity ?? 0;
 
-    if (stockQuantity < item.quantity) {
-      throw badRequestError(`Insufficient stock for product: ${item.product_id}`);
+    if (stockQuantity < quantity) {
+      throw badRequestError(`Insufficient stock for product: ${productId}`);
     }
 
     approvalItems.push({
       product,
-      quantity: item.quantity,
+      quantity,
+      currentStock: stockQuantity,
     });
   }
 
-  for (const item of approvalItems) {
-    const currentStock = item.product.stock_quantity ?? 0;
-    const updatedProduct = await updateProductRecord(item.product.id as string, {
-      stock_quantity: currentStock - item.quantity,
-    });
+  const appliedItems: OrderApprovalItem[] = [];
 
-    if (!updatedProduct) {
-      throw notFoundError(`Product not found: ${item.product.id as string}`);
+  try {
+    for (const item of approvalItems) {
+      await createInventoryLog({
+        product_id: item.product.id as string,
+        movement_type: "out",
+        quantity_change: item.quantity,
+        reference_type: "order",
+        reference_id: orderId,
+        note: `Order approved: ${orderId}`,
+        created_by: parsedInput.data.approved_by ?? null,
+      });
+
+      appliedItems.push(item);
     }
 
-    await createInventoryLogRecord({
-      product_id: item.product.id as string,
-      movement_type: "out",
-      quantity_change: item.quantity,
-      reference_type: "order",
-      reference_id: orderId,
-      note: `Order approved: ${orderId}`,
-      created_by: parsedInput.data.approved_by ?? null,
+    const approvedOrder = await transitionOrderStatusRecord(orderId, {
+      currentStatus: "pending",
+      nextStatus: "approved",
+      approvedBy: parsedInput.data.approved_by ?? null,
+      rejectionReason: null,
     });
+
+    if (!approvedOrder) {
+      const latestOrder = await getOrderByIdRecord(orderId);
+
+      if (!latestOrder) {
+        throw notFoundError("Order not found");
+      }
+
+      throw badRequestError("Only pending orders can be reviewed");
+    }
+
+    return mapOrder(approvedOrder);
+  } catch (error) {
+    for (const item of appliedItems.reverse()) {
+      try {
+        const latestProduct = await getProductByIdRecord(item.product.id as string);
+
+        if (!latestProduct) {
+          continue;
+        }
+
+        const latestStock = latestProduct.stock_quantity ?? 0;
+        const expectedStock = item.currentStock - item.quantity;
+
+        if (latestStock !== expectedStock) {
+          continue;
+        }
+
+        await createInventoryLog({
+          product_id: item.product.id as string,
+          movement_type: "in",
+          quantity_change: item.quantity,
+          reference_type: "order",
+          reference_id: orderId,
+          note: `Order approval rollback: ${orderId}`,
+          created_by: parsedInput.data.approved_by ?? null,
+        });
+      } catch {
+        // Best-effort rollback only. Preserve the original approval error.
+      }
+    }
+
+    throw error;
   }
-
-  const approvedOrder = await updateOrderRecord(orderId, {
-    status: "approved",
-    approved_by: parsedInput.data.approved_by ?? null,
-    rejection_reason: null,
-  });
-
-  if (!approvedOrder) {
-    throw notFoundError("Order not found");
-  }
-
-  return mapOrder(approvedOrder);
 }

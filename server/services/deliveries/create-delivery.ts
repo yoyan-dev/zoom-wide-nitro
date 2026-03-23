@@ -3,10 +3,9 @@ import { createDeliveryRecord } from "../../repositories/deliveries/create-deliv
 import { getDeliveryByOrderIdRecord } from "../../repositories/deliveries/get-delivery-by-order-id";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { createDeliverySchema } from "../../schemas";
-import { badRequestError, notFoundError } from "../../utils/errors";
+import { badRequestError } from "../../utils/errors";
+import { requireOrderApprovedForDelivery } from "../orders/order-workflow-rules";
 import { mapDelivery } from "./map-delivery";
-
-const ALLOWED_CREATE_STATUSES = new Set(["scheduled", "in_transit"]);
 
 export async function createDelivery(input: unknown): Promise<Delivery> {
   const parsedInput = createDeliverySchema.safeParse(input);
@@ -15,15 +14,9 @@ export async function createDelivery(input: unknown): Promise<Delivery> {
     throw badRequestError(parsedInput.error.message);
   }
 
-  const order = await getOrderByIdRecord(parsedInput.data.order_id);
-
-  if (!order) {
-    throw notFoundError("Order not found");
-  }
-
-  if (order.status !== "approved") {
-    throw badRequestError("Only approved orders can be scheduled for delivery");
-  }
+  const order = requireOrderApprovedForDelivery(
+    await getOrderByIdRecord(parsedInput.data.order_id),
+  );
 
   const existingDelivery = await getDeliveryByOrderIdRecord(order.id);
 
@@ -31,12 +24,12 @@ export async function createDelivery(input: unknown): Promise<Delivery> {
     throw badRequestError("Delivery already exists for this order");
   }
 
-  if (!ALLOWED_CREATE_STATUSES.has(parsedInput.data.status)) {
-    throw badRequestError("Delivery must start as scheduled or in transit");
+  if (parsedInput.data.status !== "scheduled") {
+    throw badRequestError("Delivery must start as scheduled");
   }
 
-  if (parsedInput.data.status === "in_transit" && !parsedInput.data.scheduled_at) {
-    throw badRequestError("scheduled_at is required when starting in transit");
+  if (parsedInput.data.delivered_at) {
+    throw badRequestError("delivered_at cannot be set when creating a delivery");
   }
 
   const delivery = await createDeliveryRecord({

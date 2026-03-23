@@ -26,6 +26,12 @@ export const createPaymentSchema = z.object({
 
 export const updatePaymentSchema = createPaymentSchema.partial();
 
+export const updatePaymentStatusSchema = z.object({
+  status: paymentStatusSchema,
+  transaction_ref: z.string().trim().min(1).nullable().optional(),
+  paid_at: z.string().datetime().nullable().optional(),
+});
+
 export const paymentQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().optional(),
   status: paymentStatusSchema.or(z.literal("")).optional(),

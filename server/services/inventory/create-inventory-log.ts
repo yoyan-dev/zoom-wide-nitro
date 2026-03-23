@@ -6,6 +6,37 @@ import { createInventoryLogSchema } from "../../schemas";
 import { badRequestError, notFoundError } from "../../utils/errors";
 import { mapStockViewItem } from "./map-stock-view-item";
 
+type MovementComputation = {
+  nextStock: number;
+  loggedQuantityChange: number;
+};
+
+function getMovementComputation(
+  movementType: "in" | "out" | "adjustment",
+  currentStock: number,
+  quantityChange: number,
+): MovementComputation {
+  if (movementType === "in") {
+    return {
+      nextStock: currentStock + quantityChange,
+      loggedQuantityChange: quantityChange,
+    };
+  }
+
+  if (movementType === "out") {
+    return {
+      nextStock: currentStock - quantityChange,
+      loggedQuantityChange: quantityChange,
+    };
+  }
+
+  const nextStock = quantityChange;
+  return {
+    nextStock,
+    loggedQuantityChange: Math.abs(nextStock - currentStock),
+  };
+}
+
 export async function createInventoryLog(
   input: unknown,
 ): Promise<InventoryMovementResult> {
@@ -22,14 +53,18 @@ export async function createInventoryLog(
   }
 
   const currentStock = product.stock_quantity ?? 0;
-  const signedQuantityChange =
-    parsedBody.data.movement_type === "out"
-      ? -parsedBody.data.quantity_change
-      : parsedBody.data.quantity_change;
-  const nextStock = currentStock + signedQuantityChange;
+  const { nextStock, loggedQuantityChange } = getMovementComputation(
+    parsedBody.data.movement_type,
+    currentStock,
+    parsedBody.data.quantity_change,
+  );
 
   if (nextStock < 0) {
     throw badRequestError("Inventory movement would result in negative stock");
+  }
+
+  if (parsedBody.data.movement_type === "adjustment" && nextStock === currentStock) {
+    throw badRequestError("Adjustment must change stock");
   }
 
   const updatedProduct = await updateProductRecord(product.id ?? "", {
@@ -42,7 +77,7 @@ export async function createInventoryLog(
 
   const log = await createInventoryLogRecord({
     ...parsedBody.data,
-    quantity_change: parsedBody.data.quantity_change,
+    quantity_change: loggedQuantityChange,
   });
 
   return {

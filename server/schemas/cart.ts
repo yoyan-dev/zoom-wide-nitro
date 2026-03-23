@@ -30,3 +30,8 @@ export const addCartItemSchema = z.object({
   product_id: textIdSchema,
   quantity: z.coerce.number().positive(),
 });
+
+export const checkoutCartSchema = z.object({
+  customer_id: textIdSchema,
+  notes: z.string().trim().max(2000).nullable().optional(),
+});
