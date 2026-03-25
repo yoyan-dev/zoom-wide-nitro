@@ -7,7 +7,7 @@ import { created } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, "suppliers:write");
+    // requirePermission(event, "suppliers:write");
 
     const formData = await requireMultipartFormData(event, "supplier creation");
     const supplier = await createSupplier(formData);

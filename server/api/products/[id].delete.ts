@@ -6,7 +6,7 @@ import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, "products:write");
+    // requirePermission(event, "products:write");
 
     await deleteProduct(getRouterParam(event, "id"));
 
