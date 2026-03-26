@@ -5,6 +5,7 @@ export default defineNitroConfig({
   srcDir: "server",
   runtimeConfig: {
     supabaseUrl: process.env.SUPABASE_URL,
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
     supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
     supabaseCategoryImagesBucket:
       process.env.SUPABASE_CATEGORY_IMAGES_BUCKET || "category-images",

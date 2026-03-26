@@ -108,6 +108,10 @@ export function forbiddenError(message = "Forbidden") {
   return new AppError("forbidden", message);
 }
 
+export function conflictError(message = "Conflict") {
+  return new AppError("conflict", message);
+}
+
 export function notFoundError(message = "Not found") {
   return new AppError("not_found", message);
 }
