@@ -6,7 +6,7 @@ import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    // requirePermission(event, "suppliers:write");
+    requirePermission(event, "suppliers:write");
 
     await deleteSupplier(getRouterParam(event, "id"));
 

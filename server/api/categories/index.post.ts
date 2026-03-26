@@ -7,7 +7,7 @@ import { created } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    // requirePermission(event, "categories:write");
+    requirePermission(event, "categories:write");
 
     const formData = await requireMultipartFormData(event, "category creation");
     const category = await createCategory(formData);

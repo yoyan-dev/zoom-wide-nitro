@@ -6,7 +6,7 @@ import { noContent } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    // requirePermission(event, "categories:write");
+    requirePermission(event, "categories:write");
 
     await deleteCategory(getRouterParam(event, "id"));
 

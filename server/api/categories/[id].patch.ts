@@ -6,7 +6,7 @@ import { ok } from "../../utils/response";
 
 export default defineEventHandler(async (event) => {
   try {
-    // requirePermission(event, "categories:write");
+    requirePermission(event, "categories:write");
 
     const category = await updateCategory({
       id: getRouterParam(event, "id"),
