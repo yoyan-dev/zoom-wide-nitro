@@ -34,6 +34,22 @@ Content-Type: application/json
   "password": "your-password"
 }`;
 
+const refreshExample = `POST /api/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "<refresh_token>"
+}`;
+
+const logoutExample = `POST /api/auth/logout
+Content-Type: application/json
+Authorization: Bearer <access_token>
+
+{
+  "refresh_token": "<refresh_token>",
+  "scope": "local"
+}`;
+
 const successExample = `{
   "status": "ok",
   "statusCode": 200,
@@ -85,6 +101,20 @@ const sections: Section[] = [
         access: "public",
         input: "json: email, password",
         note: "Use data.user.role for frontend routing. Use data.customer.id for customer-owned flows.",
+      },
+      {
+        method: "POST",
+        path: "/api/auth/refresh",
+        access: "public",
+        input: "json: refresh_token",
+        note: "Returns a fresh session and refreshed user payload.",
+      },
+      {
+        method: "POST",
+        path: "/api/auth/logout",
+        access: "bearer access token + json refresh_token",
+        input: "json: refresh_token, scope?",
+        note: "Revokes the current session by default. Use scope=global to revoke all sessions.",
       },
     ],
   },
@@ -433,11 +463,14 @@ function renderHtml(): string {
     <p>Base path: <code>/api</code></p>
     <p>Protected routes use: <code>Authorization: Bearer &lt;access_token&gt;</code></p>
     <p>After login, use <code>data.user.role</code> for frontend routing. For customer-owned routes, use <code>data.customer.id</code>.</p>
+    <p>Use <code>POST /api/auth/refresh</code> to rotate sessions and <code>POST /api/auth/logout</code> to revoke them.</p>
 
     <div class="box">
       <strong>Examples</strong>
       <pre>${escapeHtml(registerExample)}</pre>
       <pre>${escapeHtml(loginExample)}</pre>
+      <pre>${escapeHtml(refreshExample)}</pre>
+      <pre>${escapeHtml(logoutExample)}</pre>
       <pre>${escapeHtml(successExample)}</pre>
       <pre>${escapeHtml(errorExample)}</pre>
     </div>

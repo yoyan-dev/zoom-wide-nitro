@@ -17,8 +17,15 @@ export interface AuthSessionPayload {
   expires_at: number | null;
 }
 
+export type AuthSignOutScope = "global" | "local" | "others";
+
 export interface AuthResponseData {
   session: AuthSessionPayload | null;
   user: AuthUserProfile;
   customer: Customer | null;
+}
+
+export interface AuthLogoutResponseData {
+  signed_out: true;
+  scope: AuthSignOutScope;
 }

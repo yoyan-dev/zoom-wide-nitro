@@ -9,7 +9,6 @@ import { useRuntimeConfig } from "nitropack/runtime";
 import type { UserRole } from "../../types";
 
 let supabaseAdmin: SupabaseClient | null = null;
-let supabaseAuthClient: SupabaseClient | null = null;
 
 function getSupabaseConfig() {
   const runtimeConfig = useRuntimeConfig();
@@ -52,21 +51,17 @@ export function getSupabaseAdmin(): SupabaseClient {
 }
 
 export function getSupabaseAuthClient(): SupabaseClient {
-  if (supabaseAuthClient) {
-    return supabaseAuthClient;
-  }
-
   const { supabaseUrl, anonKey, serviceRoleKey } = getSupabaseConfig();
   const authKey = anonKey || serviceRoleKey;
 
-  supabaseAuthClient = createClient(supabaseUrl, authKey, {
+  // Auth clients should be request-scoped so session mutations do not leak
+  // across concurrent requests in the server process.
+  return createClient(supabaseUrl, authKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
   });
-
-  return supabaseAuthClient;
 }
 
 export function getSupabaseRepositoryClient(): SupabaseClient {
@@ -95,6 +90,36 @@ export async function signInWithPassword(input: {
   return supabase.auth.signInWithPassword({
     email: input.email,
     password: input.password,
+  });
+}
+
+export async function refreshSupabaseSession(
+  refreshToken: string,
+): Promise<AuthResponse> {
+  const supabase = getSupabaseAuthClient();
+
+  return supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+}
+
+export async function signOutSupabaseSession(input: {
+  accessToken: string;
+  refreshToken: string;
+  scope?: "global" | "local" | "others";
+}) {
+  const supabase = getSupabaseAuthClient();
+  const { error: setSessionError } = await supabase.auth.setSession({
+    access_token: input.accessToken,
+    refresh_token: input.refreshToken,
+  });
+
+  if (setSessionError) {
+    return { error: setSessionError };
+  }
+
+  return supabase.auth.signOut({
+    scope: input.scope,
   });
 }
 
