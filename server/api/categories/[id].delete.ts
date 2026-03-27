@@ -1,8 +1,4 @@
-import {
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { deleteCategory } from "../../services/categories/delete-category";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { requirePermission } from "../../utils/permissions";

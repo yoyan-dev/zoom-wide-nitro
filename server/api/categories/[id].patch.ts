@@ -1,8 +1,4 @@
-import {
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-} from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { updateCategory } from "../../services/categories/update-category";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { requirePermission } from "../../utils/permissions";

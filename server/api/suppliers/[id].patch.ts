@@ -1,8 +1,4 @@
-import {
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-} from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { updateSupplier } from "../../services/suppliers/update-supplier";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { requirePermission } from "../../utils/permissions";

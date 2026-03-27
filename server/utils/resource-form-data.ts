@@ -1,5 +1,12 @@
 import type { MultiPartData } from "h3";
 
+const PRODUCT_IMAGE_FIELD_ALIASES = [
+  "image",
+  "imageFile",
+  "image_file",
+  "file",
+] as const;
+
 function readPartValue(part: MultiPartData): string {
   return part.data.toString("utf8").trim();
 }
@@ -69,6 +76,18 @@ export function parseProductMultipartFields(parts: MultiPartData[]) {
     handbook: parseOptionalJson(parts, "handbook"),
     is_active: parseOptionalBoolean(parts, "is_active"),
   };
+}
+
+export function getProductImagePart(parts: MultiPartData[]) {
+  return parts.find(
+    (part) =>
+      !!part.name &&
+      PRODUCT_IMAGE_FIELD_ALIASES.includes(
+        part.name as (typeof PRODUCT_IMAGE_FIELD_ALIASES)[number],
+      ) &&
+      !!part.filename &&
+      part.data.length > 0,
+  );
 }
 
 export function parseInventoryMultipartFields(parts: MultiPartData[]) {
