@@ -1,8 +1,4 @@
-import type {
-  AppErrorCode,
-  HttpStatusCode,
-  StatusMessage,
-} from "../../types";
+import type { AppErrorCode, HttpStatusCode, StatusMessage } from "../types";
 
 type AppErrorConfig = {
   statusCode: HttpStatusCode;

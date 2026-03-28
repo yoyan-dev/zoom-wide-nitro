@@ -1,4 +1,4 @@
-import type { OrderStatus } from "../../../types";
+import type { OrderStatus } from "../../types";
 
 export type OrderReportFilters = {
   q?: string;

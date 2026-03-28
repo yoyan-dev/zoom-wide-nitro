@@ -1,4 +1,4 @@
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 import { getSupplierByIdRecord } from "../../repositories/suppliers/get-supplier-by-id";
 import { notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";

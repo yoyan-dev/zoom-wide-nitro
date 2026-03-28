@@ -1,4 +1,4 @@
-import type { Warehouse } from "../../../types";
+import type { Warehouse } from "../../types";
 import type { RepositoryListResult } from "../../utils/supabase-repository";
 import {
   ensureRepositorySuccess,
@@ -26,9 +26,11 @@ export async function listWarehouseRecords(
 
   if (params.q) {
     query = query.or(
-      [`id.ilike.%${params.q}%`, `name.ilike.%${params.q}%`, `address.ilike.%${params.q}%`].join(
-        ",",
-      ),
+      [
+        `id.ilike.%${params.q}%`,
+        `name.ilike.%${params.q}%`,
+        `address.ilike.%${params.q}%`,
+      ].join(","),
     );
   }
 

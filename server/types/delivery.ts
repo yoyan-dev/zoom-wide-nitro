@@ -1,5 +1,6 @@
 import type { Order } from "./order";
 import type { PaginationMeta, PaginationParams } from "./pagination";
+import type { Driver } from "./driver";
 
 export type DeliveryStatus =
   | "scheduled"
@@ -23,6 +24,7 @@ export interface Delivery {
   scheduled_at: string | null;
   delivered_at: string | null;
   order?: Order;
+  driver?: Driver;
   created_at: string;
   updated_at: string;
 }

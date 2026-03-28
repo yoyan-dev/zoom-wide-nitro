@@ -2,7 +2,7 @@ import type {
   PaymentMethod,
   PaymentReportSummary,
   PaymentStatus,
-} from "../../../types";
+} from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -32,9 +32,7 @@ export async function getPaymentSummaryRecord(
   filters: PaymentReportFilters,
 ): Promise<PaymentReportSummary> {
   const supabase = useRepositoryClient();
-  let query = supabase
-    .from("payments")
-    .select("status, amount");
+  let query = supabase.from("payments").select("status, amount");
 
   query = applyPaymentReportFilters(query, filters);
 

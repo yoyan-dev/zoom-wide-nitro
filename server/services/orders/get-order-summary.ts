@@ -1,4 +1,4 @@
-import type { OrderReportSummary } from "../../../types";
+import type { OrderReportSummary } from "../../types";
 import { getOrderSummaryRecord } from "../../repositories/orders/get-order-summary";
 import { assertValidOrderReportStatus } from "./order-reporting";
 

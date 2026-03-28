@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Cart } from "../../../types";
+import type { Cart } from "../../types";
 import { updateCartSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

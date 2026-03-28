@@ -1,7 +1,8 @@
-import type { Delivery, Order } from "../../../types";
+import type { Delivery, Driver, Order } from "../../types";
 
 type DeliveryRecord = Delivery & {
   order?: unknown;
+  driver?: unknown;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -16,5 +17,6 @@ export function mapDelivery(record: DeliveryRecord): Delivery {
     scheduled_at: record.scheduled_at ?? null,
     delivered_at: record.delivered_at ?? null,
     order: isRecord(record.order) ? (record.order as Order) : undefined,
+    driver: isRecord(record.driver) ? (record.driver as Driver) : undefined,
   };
 }

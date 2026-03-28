@@ -1,4 +1,4 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { badRequestError, notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";

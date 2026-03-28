@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Category } from "../../../types";
+import type { Category } from "../../types";
 import { createCategorySchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

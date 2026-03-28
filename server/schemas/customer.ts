@@ -7,6 +7,7 @@ export const createCustomerSchema = z.object({
   contact_name: z.string().trim().min(1).max(160),
   phone: z.string().trim().min(1).max(60).nullable().optional(),
   email: z.string().trim().email(),
+  image_url: z.string().trim().url().nullable().optional(),
   billing_address: z.string().trim().min(1).max(500).nullable().optional(),
   shipping_address: z.string().trim().min(1).max(500).nullable().optional(),
 });

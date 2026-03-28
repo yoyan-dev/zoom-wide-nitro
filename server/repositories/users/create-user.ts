@@ -1,8 +1,9 @@
-import type { User } from "../../../types";
+import type { User } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
+import { USER_SELECT } from "./user-select";
 
 type CreateUserRecordInput = {
   id: string;
@@ -10,6 +11,7 @@ type CreateUserRecordInput = {
   full_name: string;
   role: User["role"];
   phone?: string | null;
+  image_url?: string | null;
 };
 
 export async function createUserRecord(
@@ -24,6 +26,7 @@ export async function createUserRecord(
     full_name: input.full_name,
     role: input.role,
     phone: input.phone ?? null,
+    image_url: input.image_url ?? null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -32,7 +35,7 @@ export async function createUserRecord(
   const { data, error } = await supabase
     .from("users")
     .insert(payload)
-    .select("id, email, full_name, role, phone, is_active, created_at, updated_at")
+    .select(USER_SELECT)
     .single();
 
   ensureRepositorySuccess(error);

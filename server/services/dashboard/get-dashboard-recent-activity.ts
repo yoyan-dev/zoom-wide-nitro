@@ -1,4 +1,4 @@
-import type { DashboardRecentActivity } from "../../../types";
+import type { DashboardRecentActivity } from "../../types";
 import { getDashboardRecentActivityRecord } from "../../repositories/dashboard/get-dashboard-recent-activity";
 import { normalizeReportLimit } from "../../utils/reporting";
 import { mapDelivery } from "../deliveries/map-delivery";
@@ -19,7 +19,8 @@ export async function getDashboardRecentActivity(
   return {
     recentOrders: result.recentOrders.map(mapOrder),
     recentDeliveries: result.recentDeliveries.map(mapDelivery),
-    recentInventoryMovements: result.recentInventoryMovements.map(mapInventoryLog),
+    recentInventoryMovements:
+      result.recentInventoryMovements.map(mapInventoryLog),
     recentPayments: result.recentPayments.map(mapPayment),
   };
 }

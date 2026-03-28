@@ -1,4 +1,4 @@
-import type { Delivery } from "../../../types";
+import type { Delivery } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,

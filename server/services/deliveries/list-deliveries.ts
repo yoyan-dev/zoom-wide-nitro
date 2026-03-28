@@ -1,4 +1,4 @@
-import type { Delivery, PaginatedResult } from "../../../types";
+import type { Delivery, PaginatedResult } from "../../types";
 import { listDeliveryRecords } from "../../repositories/deliveries/list-deliveries";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { assertValidDeliveryReportStatus } from "./delivery-reporting";

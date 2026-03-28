@@ -1,4 +1,4 @@
-import type { PaginatedResult, Product } from "../../../types";
+import type { PaginatedResult, Product } from "../../types";
 import { listProductRecords } from "../../repositories/products/list-products";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { mapProduct } from "./map-product";

@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { PaymentMethod, PaymentStatus } from "../../../types";
+import type { PaymentMethod, PaymentStatus } from "../../types";
 import { requireOrderAccess } from "../orders/require-order-access";
 import { badRequestError } from "../../utils/errors";
 import { requirePermission } from "../../utils/permissions";

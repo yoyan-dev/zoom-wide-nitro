@@ -1,4 +1,4 @@
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 import { getSupplierByIdRecord } from "../../repositories/suppliers/get-supplier-by-id";
 import { updateSupplierRecord } from "../../repositories/suppliers/update-supplier";
 import { updateSupplierSchema } from "../../schemas";
@@ -35,7 +35,10 @@ export async function updateSupplier(
     return mapSupplier(existingSupplier);
   }
 
-  const updatedSupplier = await updateSupplierRecord(supplierId, parsedInput.data);
+  const updatedSupplier = await updateSupplierRecord(
+    supplierId,
+    parsedInput.data,
+  );
 
   if (!updatedSupplier) {
     throw notFoundError("Supplier not found");

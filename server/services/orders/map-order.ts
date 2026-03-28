@@ -1,4 +1,10 @@
-import type { Customer, Order, OrderDetail, OrderItem, Product } from "../../../types";
+import type {
+  Customer,
+  Order,
+  OrderDetail,
+  OrderItem,
+  Product,
+} from "../../types";
 import { mapCustomer } from "../customers/map-customer";
 import { mapProduct } from "../products/map-product";
 

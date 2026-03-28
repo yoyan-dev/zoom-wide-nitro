@@ -7,6 +7,7 @@ export interface Customer {
   contact_name: string;
   phone: string | null;
   email: string;
+  image_url: string | null;
   billing_address: string | null;
   shipping_address: string | null;
   created_at: string;

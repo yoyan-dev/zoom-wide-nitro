@@ -1,5 +1,5 @@
 import type { MultiPartData } from "h3";
-import type { Product } from "../../../types";
+import type { Product } from "../../types";
 import { getProductByIdRecord } from "../../repositories/products/get-product-by-id";
 import { updateProductRecord } from "../../repositories/products/update-product";
 import { updateProductSchema } from "../../schemas";

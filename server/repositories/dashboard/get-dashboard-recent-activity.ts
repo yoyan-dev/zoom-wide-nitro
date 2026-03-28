@@ -1,4 +1,10 @@
-import type { DashboardRecentActivity, Delivery, InventoryLog, Order, Payment } from "../../../types";
+import type {
+  DashboardRecentActivity,
+  Delivery,
+  InventoryLog,
+  Order,
+  Payment,
+} from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -20,7 +26,9 @@ export async function getRecentOrderRecords(limit: number): Promise<Order[]> {
   return (data ?? []) as Order[];
 }
 
-export async function getRecentDeliveryRecords(limit: number): Promise<Delivery[]> {
+export async function getRecentDeliveryRecords(
+  limit: number,
+): Promise<Delivery[]> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("deliveries")
@@ -46,7 +54,9 @@ export async function getRecentInventoryMovementRecords(
   return (data ?? []) as InventoryLog[];
 }
 
-export async function getRecentPaymentRecords(limit: number): Promise<Payment[]> {
+export async function getRecentPaymentRecords(
+  limit: number,
+): Promise<Payment[]> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("payments")

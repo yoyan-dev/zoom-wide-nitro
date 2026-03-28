@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { InventoryMovementType, InventoryStockStatus } from "../../../types";
+import type { InventoryMovementType, InventoryStockStatus } from "../../types";
 import { badRequestError } from "../../utils/errors";
 import { requirePermission } from "../../utils/permissions";
 
@@ -15,7 +15,9 @@ export const INVENTORY_STOCK_STATUSES = [
 ] as const satisfies readonly InventoryStockStatus[];
 
 const INVENTORY_STOCK_STATUS_SET = new Set<string>(INVENTORY_STOCK_STATUSES);
-const INVENTORY_MOVEMENT_TYPE_SET = new Set<string>(INVENTORY_MOVEMENT_REPORT_TYPES);
+const INVENTORY_MOVEMENT_TYPE_SET = new Set<string>(
+  INVENTORY_MOVEMENT_REPORT_TYPES,
+);
 
 export function assertValidInventoryMovementType(
   movementType?: string,
@@ -25,7 +27,9 @@ export function assertValidInventoryMovementType(
   }
 
   if (!INVENTORY_MOVEMENT_TYPE_SET.has(movementType)) {
-    throw badRequestError("movement_type must be a valid inventory movement type");
+    throw badRequestError(
+      "movement_type must be a valid inventory movement type",
+    );
   }
 
   return movementType as InventoryMovementType;
@@ -39,7 +43,9 @@ export function assertValidInventoryStockStatus(
   }
 
   if (!INVENTORY_STOCK_STATUS_SET.has(stockStatus)) {
-    throw badRequestError("stock_status must be a valid inventory stock status");
+    throw badRequestError(
+      "stock_status must be a valid inventory stock status",
+    );
   }
 
   return stockStatus as InventoryStockStatus;

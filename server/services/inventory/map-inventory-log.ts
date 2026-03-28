@@ -1,4 +1,4 @@
-import type { InventoryLog } from "../../../types";
+import type { InventoryLog } from "../../types";
 import { mapProduct } from "../products/map-product";
 
 export function mapInventoryLog(record: InventoryLog): InventoryLog {

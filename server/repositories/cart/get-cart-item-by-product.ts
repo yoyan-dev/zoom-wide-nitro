@@ -1,4 +1,4 @@
-import type { CartItem } from "../../../types";
+import type { CartItem } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,

@@ -1,4 +1,10 @@
-import type { InventoryStockItem, Product, ProductCategoryCount, ProductInsights, ProductSalesInsight } from "../../../types";
+import type {
+  InventoryStockItem,
+  Product,
+  ProductCategoryCount,
+  ProductInsights,
+  ProductSalesInsight,
+} from "../../types";
 import {
   getLowStockProductRecords,
   getProductCategoryCountRecords,
@@ -13,7 +19,10 @@ type GetProductInsightsParams = {
   limit?: number;
 };
 
-function buildLowStockProducts(records: Product[], limit: number): InventoryStockItem[] {
+function buildLowStockProducts(
+  records: Product[],
+  limit: number,
+): InventoryStockItem[] {
   return records
     .map(mapStockViewItem)
     .filter((item) => item.is_low_stock)
@@ -25,7 +34,10 @@ function buildLowStockProducts(records: Product[], limit: number): InventoryStoc
     .slice(0, limit);
 }
 
-function buildTopSellingProducts(records: Awaited<ReturnType<typeof getTopSellingProductRecords>>, limit: number): ProductSalesInsight[] {
+function buildTopSellingProducts(
+  records: Awaited<ReturnType<typeof getTopSellingProductRecords>>,
+  limit: number,
+): ProductSalesInsight[] {
   const aggregated = new Map<string, ProductSalesInsight>();
 
   for (const record of records) {
@@ -81,7 +93,9 @@ function buildProductsByCategory(records: Product[]): ProductCategoryCount[] {
     });
   }
 
-  return [...counts.values()].sort((left, right) => right.productCount - left.productCount);
+  return [...counts.values()].sort(
+    (left, right) => right.productCount - left.productCount,
+  );
 }
 
 export async function getProductInsights(
@@ -100,6 +114,8 @@ export async function getProductInsights(
     lowStockProducts: buildLowStockProducts(lowStockRecords, limit),
     recentProducts: recentRecords.map(mapProduct),
     topSellingProducts: buildTopSellingProducts(topSellingRecords, limit),
-    productsByCategory: buildProductsByCategory(categoryRecords.map(mapProduct)),
+    productsByCategory: buildProductsByCategory(
+      categoryRecords.map(mapProduct),
+    ),
   };
 }

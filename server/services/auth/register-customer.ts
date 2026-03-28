@@ -1,4 +1,4 @@
-import type { AuthResponseData } from "../../../types";
+import type { AuthResponseData } from "../../types";
 import {
   createSupabaseAuthUser,
   deleteSupabaseAuthUser,
@@ -46,6 +46,7 @@ export async function registerCustomer(
       role: "customer",
       fullName: data.contact_name,
       phone: data.phone ?? null,
+      imageUrl: data.image_url ?? null,
     });
 
     authUserId = authUser.id;
@@ -56,6 +57,7 @@ export async function registerCustomer(
       full_name: data.contact_name,
       role: "customer",
       phone: data.phone ?? null,
+      image_url: data.image_url ?? null,
     });
 
     const customer = await createCustomerRecord({
@@ -64,6 +66,7 @@ export async function registerCustomer(
       contact_name: data.contact_name,
       phone: data.phone ?? null,
       email: data.email,
+      image_url: data.image_url ?? null,
       billing_address: data.billing_address ?? null,
       shipping_address: data.shipping_address ?? null,
     });
@@ -73,6 +76,7 @@ export async function registerCustomer(
     const resolvedUser = await resolveAuthenticatedUser({
       id: authUser.id,
       email: data.email,
+      imageUrl: data.image_url ?? null,
       role: "customer",
     });
 

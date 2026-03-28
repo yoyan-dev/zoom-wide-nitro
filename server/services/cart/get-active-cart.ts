@@ -1,4 +1,4 @@
-import type { CartDetail } from "../../../types";
+import type { CartDetail } from "../../types";
 import { ensureActiveCartRecord } from "./ensure-active-cart";
 import { getValidCartCustomer } from "./get-valid-cart-customer";
 import { mapCart } from "./map-cart";

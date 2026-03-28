@@ -1,11 +1,12 @@
 import { getHeader, type H3Event } from "h3";
-import type { UserRole } from "../../types/user";
+import type { UserRole } from "../types/user";
 import { unauthorizedError } from "./errors";
 
 export type AuthenticatedRequestUser = {
   id: string;
   role: UserRole | null;
   email: string | null;
+  imageUrl: string | null;
   roleSource: "users_table" | "auth_metadata" | "none";
   isActive: boolean | null;
 };
@@ -86,7 +87,9 @@ export function getRequestAuth(event: H3Event): RequestAuthContext {
   return event.context.auth ?? getAnonymousAuthContext();
 }
 
-export function getRequestUser(event: H3Event): AuthenticatedRequestUser | null {
+export function getRequestUser(
+  event: H3Event,
+): AuthenticatedRequestUser | null {
   return getRequestAuth(event).user;
 }
 

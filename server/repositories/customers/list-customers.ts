@@ -1,4 +1,4 @@
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import type { RepositoryListResult } from "../../utils/supabase-repository";
 import {
   ensureRepositorySuccess,

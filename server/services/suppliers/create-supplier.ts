@@ -1,12 +1,14 @@
 import type { MultiPartData } from "h3";
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 import { createSupplierRecord } from "../../repositories/suppliers/create-supplier";
 import { createSupplierSchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";
 import { parseSupplierMultipartFields } from "../../utils/resource-form-data";
 import { mapSupplier } from "./map-supplier";
 
-export async function createSupplier(parts: MultiPartData[]): Promise<Supplier> {
+export async function createSupplier(
+  parts: MultiPartData[],
+): Promise<Supplier> {
   let body: ReturnType<typeof parseSupplierMultipartFields>;
 
   try {

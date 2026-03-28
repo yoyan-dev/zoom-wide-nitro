@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { createOrderSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,
@@ -9,7 +9,9 @@ import { ORDER_DETAIL_SELECT } from "./order-select";
 
 type CreateOrderInput = z.infer<typeof createOrderSchema>;
 
-export async function createOrderRecord(input: CreateOrderInput): Promise<Order> {
+export async function createOrderRecord(
+  input: CreateOrderInput,
+): Promise<Order> {
   const supabase = useRepositoryClient();
   const now = new Date().toISOString();
 

@@ -1,4 +1,4 @@
-import type { Product } from "../../../types";
+import type { Product } from "../../types";
 import { getProductByIdRecord } from "../../repositories/products/get-product-by-id";
 import { badRequestError, notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";

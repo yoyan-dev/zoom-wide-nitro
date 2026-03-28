@@ -6,14 +6,14 @@ import {
   type User as SupabaseAuthUser,
 } from "@supabase/supabase-js";
 import { useRuntimeConfig } from "nitropack/runtime";
-import type { UserRole } from "../../types";
+import type { UserRole } from "../types";
 
 let supabaseAdmin: SupabaseClient | null = null;
-let supabaseAuthClient: SupabaseClient | null = null;
 
 function getSupabaseConfig() {
   const runtimeConfig = useRuntimeConfig();
-  const supabaseUrl = runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
+  const supabaseUrl =
+    runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
   const anonKey =
     runtimeConfig.supabaseAnonKey || process.env.SUPABASE_ANON_KEY || "";
   const serviceRoleKey =
@@ -22,9 +22,7 @@ function getSupabaseConfig() {
     "";
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.",
-    );
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.");
   }
 
   return {
@@ -52,21 +50,17 @@ export function getSupabaseAdmin(): SupabaseClient {
 }
 
 export function getSupabaseAuthClient(): SupabaseClient {
-  if (supabaseAuthClient) {
-    return supabaseAuthClient;
-  }
-
   const { supabaseUrl, anonKey, serviceRoleKey } = getSupabaseConfig();
   const authKey = anonKey || serviceRoleKey;
 
-  supabaseAuthClient = createClient(supabaseUrl, authKey, {
+  // Auth clients should be request-scoped so session mutations do not leak
+  // across concurrent requests in the server process.
+  return createClient(supabaseUrl, authKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
   });
-
-  return supabaseAuthClient;
 }
 
 export function getSupabaseRepositoryClient(): SupabaseClient {
@@ -98,12 +92,54 @@ export async function signInWithPassword(input: {
   });
 }
 
+export async function refreshSupabaseSession(
+  refreshToken: string,
+): Promise<AuthResponse> {
+  const supabase = getSupabaseAuthClient();
+
+  return supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+}
+
+export async function sendSupabasePasswordResetEmail(input: {
+  email: string;
+  redirectTo?: string;
+}) {
+  const supabase = getSupabaseAuthClient();
+
+  return supabase.auth.resetPasswordForEmail(input.email, {
+    redirectTo: input.redirectTo,
+  });
+}
+
+export async function signOutSupabaseSession(input: {
+  accessToken: string;
+  refreshToken: string;
+  scope?: "global" | "local" | "others";
+}) {
+  const supabase = getSupabaseAuthClient();
+  const { error: setSessionError } = await supabase.auth.setSession({
+    access_token: input.accessToken,
+    refresh_token: input.refreshToken,
+  });
+
+  if (setSessionError) {
+    return { error: setSessionError };
+  }
+
+  return supabase.auth.signOut({
+    scope: input.scope,
+  });
+}
+
 export async function createSupabaseAuthUser(input: {
   email: string;
   password: string;
   role: UserRole;
   fullName: string;
   phone?: string | null;
+  imageUrl?: string | null;
 }): Promise<SupabaseAuthUser> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase.auth.admin.createUser({
@@ -116,6 +152,7 @@ export async function createSupabaseAuthUser(input: {
     user_metadata: {
       full_name: input.fullName,
       phone: input.phone ?? null,
+      image_url: input.imageUrl ?? null,
     },
   });
 
@@ -129,6 +166,69 @@ export async function createSupabaseAuthUser(input: {
 export async function deleteSupabaseAuthUser(userId: string): Promise<void> {
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.auth.admin.deleteUser(userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function updateSupabaseAuthUser(input: {
+  userId: string;
+  email?: string;
+  password?: string;
+  role?: UserRole;
+  fullName?: string;
+  phone?: string | null;
+  imageUrl?: string | null;
+}): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const payload: Record<string, unknown> = {};
+
+  if (input.email !== undefined) {
+    payload.email = input.email;
+    payload.email_confirm = true;
+  }
+
+  if (input.password !== undefined) {
+    payload.password = input.password;
+  }
+
+  if (input.role !== undefined) {
+    payload.app_metadata = {
+      role: input.role,
+    };
+  }
+
+  if (
+    input.fullName !== undefined ||
+    input.phone !== undefined ||
+    input.imageUrl !== undefined
+  ) {
+    const userMetadata: Record<string, unknown> = {};
+
+    if (input.fullName !== undefined) {
+      userMetadata.full_name = input.fullName;
+    }
+
+    if (input.phone !== undefined) {
+      userMetadata.phone = input.phone;
+    }
+
+    if (input.imageUrl !== undefined) {
+      userMetadata.image_url = input.imageUrl;
+    }
+
+    payload.user_metadata = userMetadata;
+  }
+
+  if (!Object.keys(payload).length) {
+    return;
+  }
+
+  const { error } = await supabase.auth.admin.updateUserById(
+    input.userId,
+    payload,
+  );
 
   if (error) {
     throw error;

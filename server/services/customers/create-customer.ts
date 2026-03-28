@@ -1,4 +1,4 @@
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import { createCustomerRecord } from "../../repositories/customers/create-customer";
 import { createCustomerSchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";

@@ -1,4 +1,4 @@
-import type { Category, Product, Supplier, Warehouse } from "../../../types";
+import type { Category, Product, Supplier, Warehouse } from "../../types";
 import { mapCategory } from "../categories/map-category";
 import { mapSupplier } from "../suppliers/map-supplier";
 

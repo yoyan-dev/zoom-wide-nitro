@@ -1,12 +1,10 @@
-import type { User } from "../../../types";
+import type { User } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
-
-const USER_SELECT =
-  "id, email, full_name, role, phone, is_active, created_at, updated_at";
+import { USER_SELECT } from "./user-select";
 
 export async function getUserByIdRecord(id: string): Promise<User | null> {
   const supabase = useRepositoryClient();

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import { updateCustomerSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,
@@ -21,6 +21,7 @@ export async function updateCustomerRecord(
       contact_name: input.contact_name,
       phone: input.phone,
       email: input.email,
+      image_url: input.image_url,
       billing_address: input.billing_address,
       shipping_address: input.shipping_address,
       updated_at: new Date().toISOString(),

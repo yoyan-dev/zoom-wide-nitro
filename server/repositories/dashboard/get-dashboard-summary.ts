@@ -1,4 +1,4 @@
-import type { DashboardSummary } from "../../../types";
+import type { DashboardSummary } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,

@@ -1,4 +1,4 @@
-import type { PaymentMethod, PaymentStatus } from "../../../types";
+import type { PaymentMethod, PaymentStatus } from "../../types";
 
 export type PaymentReportFilters = {
   q?: string;
@@ -9,10 +9,9 @@ export type PaymentReportFilters = {
   to?: string;
 };
 
-export function applyPaymentReportFilters<TQuery extends { [key: string]: any }>(
-  query: TQuery,
-  filters: PaymentReportFilters,
-): TQuery {
+export function applyPaymentReportFilters<
+  TQuery extends { [key: string]: any },
+>(query: TQuery, filters: PaymentReportFilters): TQuery {
   let nextQuery = query;
 
   if (filters.q) {

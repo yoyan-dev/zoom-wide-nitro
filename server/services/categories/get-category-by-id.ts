@@ -1,4 +1,4 @@
-import type { Category } from "../../../types";
+import type { Category } from "../../types";
 import { getCategoryByIdRecord } from "../../repositories/categories/get-category-by-id";
 import { notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";

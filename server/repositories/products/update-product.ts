@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Product } from "../../../types";
+import type { Product } from "../../types";
 import { updateProductSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

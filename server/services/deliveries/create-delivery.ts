@@ -1,4 +1,4 @@
-import type { Delivery } from "../../../types";
+import type { Delivery } from "../../types";
 import { createDeliveryRecord } from "../../repositories/deliveries/create-delivery";
 import { getDeliveryByOrderIdRecord } from "../../repositories/deliveries/get-delivery-by-order-id";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
@@ -29,7 +29,9 @@ export async function createDelivery(input: unknown): Promise<Delivery> {
   }
 
   if (parsedInput.data.delivered_at) {
-    throw badRequestError("delivered_at cannot be set when creating a delivery");
+    throw badRequestError(
+      "delivered_at cannot be set when creating a delivery",
+    );
   }
 
   const delivery = await createDeliveryRecord({

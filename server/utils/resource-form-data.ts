@@ -7,6 +7,16 @@ const PRODUCT_IMAGE_FIELD_ALIASES = [
   "file",
 ] as const;
 
+const ACCOUNT_IMAGE_FIELD_ALIASES = [
+  "profile",
+  "profileImage",
+  "profile_image",
+  "image",
+  "imageFile",
+  "image_file",
+  "file",
+] as const;
+
 function readPartValue(part: MultiPartData): string {
   return part.data.toString("utf8").trim();
 }
@@ -84,6 +94,85 @@ export function getProductImagePart(parts: MultiPartData[]) {
       !!part.name &&
       PRODUCT_IMAGE_FIELD_ALIASES.includes(
         part.name as (typeof PRODUCT_IMAGE_FIELD_ALIASES)[number],
+      ) &&
+      !!part.filename &&
+      part.data.length > 0,
+  );
+}
+
+export function parseUserMultipartFields(parts: MultiPartData[]) {
+  return {
+    email: parseOptionalString(parts, "email"),
+    password: parseOptionalString(parts, "password"),
+    full_name: parseOptionalString(parts, "full_name"),
+    phone: parseOptionalString(parts, "phone"),
+    role: parseOptionalString(parts, "role"),
+    image_url: parseOptionalString(parts, "image_url"),
+    is_active: parseOptionalBoolean(parts, "is_active"),
+  };
+}
+
+export function parseDriverMultipartFields(parts: MultiPartData[]) {
+  return {
+    email: parseOptionalString(parts, "email"),
+    password: parseOptionalString(parts, "password"),
+    name: parseOptionalString(parts, "name"),
+    phone: parseOptionalString(parts, "phone"),
+    image_url: parseOptionalString(parts, "image_url"),
+    license_number: parseOptionalString(parts, "license_number"),
+    vehicle_number: parseOptionalString(parts, "vehicle_number"),
+    is_active: parseOptionalBoolean(parts, "is_active"),
+  };
+}
+
+export function parseCustomerMultipartFields(parts: MultiPartData[]) {
+  return {
+    user_id: parseOptionalString(parts, "user_id"),
+    company_name: parseOptionalString(parts, "company_name"),
+    contact_name: parseOptionalString(parts, "contact_name"),
+    phone: parseOptionalString(parts, "phone"),
+    email: parseOptionalString(parts, "email"),
+    image_url: parseOptionalString(parts, "image_url"),
+    billing_address: parseOptionalString(parts, "billing_address"),
+    shipping_address: parseOptionalString(parts, "shipping_address"),
+  };
+}
+
+export function parseCustomerRegisterMultipartFields(parts: MultiPartData[]) {
+  return {
+    email: parseOptionalString(parts, "email"),
+    password: parseOptionalString(parts, "password"),
+    company_name: parseOptionalString(parts, "company_name"),
+    contact_name: parseOptionalString(parts, "contact_name"),
+    phone: parseOptionalString(parts, "phone"),
+    image_url: parseOptionalString(parts, "image_url"),
+    billing_address: parseOptionalString(parts, "billing_address"),
+    shipping_address: parseOptionalString(parts, "shipping_address"),
+  };
+}
+
+export function parseOwnAccountMultipartFields(parts: MultiPartData[]) {
+  return {
+    email: parseOptionalString(parts, "email"),
+    phone: parseOptionalString(parts, "phone"),
+    image_url: parseOptionalString(parts, "image_url"),
+    full_name: parseOptionalString(parts, "full_name"),
+    name: parseOptionalString(parts, "name"),
+    contact_name: parseOptionalString(parts, "contact_name"),
+    company_name: parseOptionalString(parts, "company_name"),
+    billing_address: parseOptionalString(parts, "billing_address"),
+    shipping_address: parseOptionalString(parts, "shipping_address"),
+    license_number: parseOptionalString(parts, "license_number"),
+    vehicle_number: parseOptionalString(parts, "vehicle_number"),
+  };
+}
+
+export function getAccountImagePart(parts: MultiPartData[]) {
+  return parts.find(
+    (part) =>
+      !!part.name &&
+      ACCOUNT_IMAGE_FIELD_ALIASES.includes(
+        part.name as (typeof ACCOUNT_IMAGE_FIELD_ALIASES)[number],
       ) &&
       !!part.filename &&
       part.data.length > 0,

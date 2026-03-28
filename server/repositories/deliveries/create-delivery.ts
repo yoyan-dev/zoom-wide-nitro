@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Delivery } from "../../../types";
+import type { Delivery } from "../../types";
 import { createDeliverySchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

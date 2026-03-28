@@ -1,4 +1,4 @@
-import type { Payment, PaymentStatus } from "../../../types";
+import type { Payment, PaymentStatus } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,

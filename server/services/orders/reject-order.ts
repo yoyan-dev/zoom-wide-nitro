@@ -1,4 +1,4 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { transitionOrderStatusRecord } from "../../repositories/orders/transition-order-status";
 import { rejectOrderSchema } from "../../schemas";
@@ -6,10 +6,7 @@ import { badRequestError, notFoundError } from "../../utils/errors";
 import { getOrderForDecision } from "./get-order-for-decision";
 import { mapOrder } from "./map-order";
 
-export async function rejectOrder(
-  id: unknown,
-  input: unknown,
-): Promise<Order> {
+export async function rejectOrder(id: unknown, input: unknown): Promise<Order> {
   const parsedInput = rejectOrderSchema.safeParse(input);
 
   if (!parsedInput.success) {

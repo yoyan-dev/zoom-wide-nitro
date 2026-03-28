@@ -1,13 +1,11 @@
-import type { User } from "../../../types";
+import type { User } from "../../types";
 import { getUserByIdRecord } from "../../repositories/users/get-user-by-id";
-import {
-  type AuthenticatedRequestUser,
-  isUserRole,
-} from "../../utils/auth";
+import { type AuthenticatedRequestUser, isUserRole } from "../../utils/auth";
 
 type ResolveAuthenticatedUserInput = {
   id: string;
   email?: string | null;
+  imageUrl?: string | null;
   role?: unknown;
 };
 
@@ -21,6 +19,7 @@ function mapUserTableResult(
     return {
       id: record.id,
       email: resolvedEmail,
+      imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: null,
       roleSource: "none",
       isActive: false,
@@ -31,6 +30,7 @@ function mapUserTableResult(
     return {
       id: record.id,
       email: resolvedEmail,
+      imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: record.role,
       roleSource: "users_table",
       isActive: record.is_active,
@@ -40,6 +40,7 @@ function mapUserTableResult(
   return {
     id: record.id,
     email: resolvedEmail,
+    imageUrl: record.image_url ?? fallback.imageUrl ?? null,
     role: null,
     roleSource: "none",
     isActive: record.is_active,
@@ -54,6 +55,7 @@ function mapFallbackResult(
   return {
     id: input.id,
     email: input.email ?? null,
+    imageUrl: input.imageUrl ?? null,
     role: fallbackRole,
     roleSource: fallbackRole ? "auth_metadata" : "none",
     isActive: null,

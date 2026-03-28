@@ -1,11 +1,11 @@
 import type { H3Event } from "h3";
 import { getDeliveryByIdRecord } from "../../repositories/deliveries/get-delivery-by-id";
-import { notFoundError } from "../../utils/errors";
+import { forbiddenError, notFoundError } from "../../utils/errors";
 import {
-  requireOwnershipOrPermission,
   requirePermission,
 } from "../../utils/permissions";
 import { string } from "../../utils/validator";
+import { getDriverByUserId } from "../drivers/get-driver-by-user-id";
 
 export async function requireDeliveryStatusAccess(
   event: H3Event,
@@ -28,10 +28,9 @@ export async function requireDeliveryStatusAccess(
     throw notFoundError("Delivery not found");
   }
 
-  requireOwnershipOrPermission(
-    event,
-    delivery.driver_id,
-    "deliveries:write",
-    "Drivers can only update deliveries assigned to them",
-  );
+  const driver = await getDriverByUserId(user.id);
+
+  if (!driver || delivery.driver_id !== driver.id) {
+    throw forbiddenError("Drivers can only update deliveries assigned to them");
+  }
 }

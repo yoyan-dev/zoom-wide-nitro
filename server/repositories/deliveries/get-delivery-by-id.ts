@@ -1,4 +1,4 @@
-import type { Delivery } from "../../../types";
+import type { Delivery } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,
@@ -6,7 +6,9 @@ import {
 } from "../../utils/supabase-repository";
 import { DELIVERY_SELECT } from "./delivery-select";
 
-export async function getDeliveryByIdRecord(id: string): Promise<Delivery | null> {
+export async function getDeliveryByIdRecord(
+  id: string,
+): Promise<Delivery | null> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("deliveries")
