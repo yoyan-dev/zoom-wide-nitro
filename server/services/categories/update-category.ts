@@ -1,4 +1,4 @@
-import type { Category } from "../../../types";
+import type { Category } from "../../types";
 import { getCategoryByIdRecord } from "../../repositories/categories/get-category-by-id";
 import { updateCategoryRecord } from "../../repositories/categories/update-category";
 import { updateCategorySchema } from "../../schemas";
@@ -35,7 +35,10 @@ export async function updateCategory(
     return mapCategory(existingCategory);
   }
 
-  const updatedCategory = await updateCategoryRecord(categoryId, parsedInput.data);
+  const updatedCategory = await updateCategoryRecord(
+    categoryId,
+    parsedInput.data,
+  );
 
   if (!updatedCategory) {
     throw notFoundError("Category not found");

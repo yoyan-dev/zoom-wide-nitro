@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 import { updateSupplierSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

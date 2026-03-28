@@ -1,4 +1,4 @@
-import type { InventoryLog } from "../../../types";
+import type { InventoryLog } from "../../types";
 import type { RepositoryListResult } from "../../utils/supabase-repository";
 import {
   ensureRepositorySuccess,
@@ -11,10 +11,11 @@ import {
 } from "./apply-inventory-movement-report-filters";
 import { INVENTORY_LOG_SELECT } from "./inventory-log-select";
 
-export type ListInventoryMovementRecordsParams = InventoryMovementReportFilters & {
-  rangeFrom: number;
-  rangeTo: number;
-};
+export type ListInventoryMovementRecordsParams =
+  InventoryMovementReportFilters & {
+    rangeFrom: number;
+    rangeTo: number;
+  };
 
 export async function listInventoryMovementRecords(
   params: ListInventoryMovementRecordsParams,

@@ -1,4 +1,4 @@
-import type { Order, Product } from "../../../types";
+import type { Order, Product } from "../../types";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { transitionOrderStatusRecord } from "../../repositories/orders/transition-order-status";
 import { getProductByIdRecord } from "../../repositories/products/get-product-by-id";
@@ -108,7 +108,9 @@ export async function approveOrder(
   } catch (error) {
     for (const item of appliedItems.reverse()) {
       try {
-        const latestProduct = await getProductByIdRecord(item.product.id as string);
+        const latestProduct = await getProductByIdRecord(
+          item.product.id as string,
+        );
 
         if (!latestProduct) {
           continue;

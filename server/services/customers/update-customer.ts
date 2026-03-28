@@ -1,4 +1,4 @@
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import { getCustomerByIdRecord } from "../../repositories/customers/get-customer-by-id";
 import { updateCustomerRecord } from "../../repositories/customers/update-customer";
 import { updateCustomerSchema } from "../../schemas";
@@ -35,7 +35,10 @@ export async function updateCustomer(
     return mapCustomer(existingCustomer);
   }
 
-  const updatedCustomer = await updateCustomerRecord(customerId, parsedInput.data);
+  const updatedCustomer = await updateCustomerRecord(
+    customerId,
+    parsedInput.data,
+  );
 
   if (!updatedCustomer) {
     throw notFoundError("Customer not found");

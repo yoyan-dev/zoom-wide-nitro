@@ -1,4 +1,4 @@
-import type { PaymentReportSummary } from "../../../types";
+import type { PaymentReportSummary } from "../../types";
 import { getPaymentSummaryRecord } from "../../repositories/payments/get-payment-summary";
 import {
   assertValidPaymentReportMethod,

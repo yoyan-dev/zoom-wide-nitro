@@ -1,4 +1,4 @@
-import type { AuthResponseData } from "../../../types";
+import type { AuthResponseData } from "../../types";
 import type { AuthenticatedRequestUser } from "../../utils/auth";
 import { getCustomerByUserIdRecord } from "../../repositories/customers/get-customer-by-user-id";
 import { mapCustomer } from "../customers/map-customer";

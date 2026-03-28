@@ -6,7 +6,7 @@ import type {
   SortDirection,
   SortFilter,
   SummaryResponse,
-} from "../../types";
+} from "../types";
 import { badRequestError } from "./errors";
 import { parseQuery } from "./query";
 import { getPagination, type PaginationInput } from "./pagination";
@@ -52,7 +52,9 @@ export function parseDateRange(
   const to = query[toField];
 
   if (from && to && new Date(from).getTime() > new Date(to).getTime()) {
-    throw badRequestError(`${fromField} must be earlier than or equal to ${toField}`);
+    throw badRequestError(
+      `${fromField} must be earlier than or equal to ${toField}`,
+    );
   }
 
   return {
@@ -112,7 +114,8 @@ export function parseStatusFilter<TStatus extends string>(
   field = "status",
 ): TStatus | undefined {
   const query = parseQuery(event, {
-    [field]: (value: unknown) => optional(value, (current) => string(current, field)),
+    [field]: (value: unknown) =>
+      optional(value, (current) => string(current, field)),
   }) as Record<string, string | undefined>;
 
   const status = query[field];
@@ -122,7 +125,9 @@ export function parseStatusFilter<TStatus extends string>(
   }
 
   if (!allowedStatuses.includes(status as TStatus)) {
-    throw badRequestError(`${field} must be one of: ${allowedStatuses.join(", ")}`);
+    throw badRequestError(
+      `${field} must be one of: ${allowedStatuses.join(", ")}`,
+    );
   }
 
   return status as TStatus;
@@ -142,9 +147,12 @@ export function parseSortFilter<TField extends string>(
   const directionName = defaults?.directionName ?? "sort_direction";
 
   const query = parseQuery(event, {
-    [fieldName]: (value: unknown) => optional(value, (current) => string(current, fieldName)),
+    [fieldName]: (value: unknown) =>
+      optional(value, (current) => string(current, fieldName)),
     [directionName]: (value: unknown) =>
-      optional(value, (current) => string(current, directionName).toLowerCase()),
+      optional(value, (current) =>
+        string(current, directionName).toLowerCase(),
+      ),
   }) as Record<string, string | undefined>;
 
   const sortBy = query[fieldName] ?? defaults?.field;
@@ -153,7 +161,9 @@ export function parseSortFilter<TField extends string>(
     | undefined;
 
   if (sortBy && !allowedFields.includes(sortBy as TField)) {
-    throw badRequestError(`${fieldName} must be one of: ${allowedFields.join(", ")}`);
+    throw badRequestError(
+      `${fieldName} must be one of: ${allowedFields.join(", ")}`,
+    );
   }
 
   if (sortDirection && sortDirection !== "asc" && sortDirection !== "desc") {

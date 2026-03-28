@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { DeliveryStatus } from "../../../types";
+import type { DeliveryStatus } from "../../types";
 import { badRequestError } from "../../utils/errors";
 import { requireOrderAccess } from "../orders/require-order-access";
 import {

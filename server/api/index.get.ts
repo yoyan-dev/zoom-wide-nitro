@@ -41,15 +41,6 @@ Content-Type: application/json
   "refresh_token": "<refresh_token>"
 }`;
 
-const logoutExample = `POST /api/auth/logout
-Content-Type: application/json
-Authorization: Bearer <access_token>
-
-{
-  "refresh_token": "<refresh_token>",
-  "scope": "local"
-}`;
-
 const successExample = `{
   "status": "ok",
   "statusCode": 200,
@@ -81,7 +72,12 @@ const sections: Section[] = [
     title: "System",
     endpoints: [
       { method: "GET", path: "/api", access: "public", note: "This guide." },
-      { method: "GET", path: "/api/health", access: "public", note: "Health check." },
+      {
+        method: "GET",
+        path: "/api/health",
+        access: "public",
+        note: "Health check.",
+      },
     ],
   },
   {
@@ -119,9 +115,83 @@ const sections: Section[] = [
     ],
   },
   {
+    title: "Users",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/users",
+        access: "bearer: admin",
+        input: "query: q?, page?, limit?",
+        note: "Lists internal accounts only. Customers and drivers are excluded.",
+      },
+      {
+        method: "POST",
+        path: "/api/users",
+        access: "bearer: admin",
+        input: "json: email, password, full_name, phone?, role",
+        note: "Creates internal accounts for roles: admin, manager, staff, warehouse_manager, finance, supplier, auditor. Use /api/drivers for driver accounts and /api/auth/register for customers.",
+      },
+      {
+        method: "GET",
+        path: "/api/users/:id",
+        access: "bearer: admin",
+      },
+      {
+        method: "PATCH",
+        path: "/api/users/:id",
+        access: "bearer: admin",
+        input: "json: email?, password?, full_name?, phone?, role?, is_active?",
+      },
+      {
+        method: "DELETE",
+        path: "/api/users/:id",
+        access: "bearer: admin",
+      },
+    ],
+  },
+  {
+    title: "Drivers",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/drivers",
+        access: "bearer: admin, staff",
+        input: "query: q?, page?, limit?",
+      },
+      {
+        method: "POST",
+        path: "/api/drivers",
+        access: "bearer: admin, staff",
+        input: "json: email, password, full_name, phone?",
+        note: "Creates a user account with the driver role.",
+      },
+      {
+        method: "GET",
+        path: "/api/drivers/:id",
+        access: "bearer: admin, staff",
+      },
+      {
+        method: "PATCH",
+        path: "/api/drivers/:id",
+        access: "bearer: admin, staff",
+        input: "json: email?, password?, full_name?, phone?, is_active?",
+      },
+      {
+        method: "DELETE",
+        path: "/api/drivers/:id",
+        access: "bearer: admin, staff",
+      },
+    ],
+  },
+  {
     title: "Categories",
     endpoints: [
-      { method: "GET", path: "/api/categories", access: "public", input: "query: q?, page?, limit?" },
+      {
+        method: "GET",
+        path: "/api/categories",
+        access: "public",
+        input: "query: q?, page?, limit?",
+      },
       { method: "GET", path: "/api/categories/:id", access: "public" },
       {
         method: "POST",
@@ -136,7 +206,11 @@ const sections: Section[] = [
         access: "bearer: admin, manager",
         input: "json partial category fields",
       },
-      { method: "DELETE", path: "/api/categories/:id", access: "bearer: admin, manager" },
+      {
+        method: "DELETE",
+        path: "/api/categories/:id",
+        access: "bearer: admin, manager",
+      },
     ],
   },
   {
@@ -160,7 +234,8 @@ const sections: Section[] = [
         method: "PATCH",
         path: "/api/products/:id",
         access: "bearer: admin, manager, warehouse_manager",
-        input: "multipart/form-data partial product fields, optional image file",
+        input:
+          "multipart/form-data partial product fields, optional image file",
       },
       {
         method: "DELETE",
@@ -178,13 +253,19 @@ const sections: Section[] = [
   {
     title: "Suppliers",
     endpoints: [
-      { method: "GET", path: "/api/suppliers", access: "public", input: "query: q?, page?, limit?" },
+      {
+        method: "GET",
+        path: "/api/suppliers",
+        access: "public",
+        input: "query: q?, page?, limit?",
+      },
       { method: "GET", path: "/api/suppliers/:id", access: "public" },
       {
         method: "POST",
         path: "/api/suppliers",
         access: "bearer: admin, manager",
-        input: "multipart/form-data: name, contact_name?, phone?, email?, address?",
+        input:
+          "multipart/form-data: name, contact_name?, phone?, email?, address?",
       },
       {
         method: "PATCH",
@@ -192,19 +273,29 @@ const sections: Section[] = [
         access: "bearer: admin, manager",
         input: "json partial supplier fields",
       },
-      { method: "DELETE", path: "/api/suppliers/:id", access: "bearer: admin, manager" },
+      {
+        method: "DELETE",
+        path: "/api/suppliers/:id",
+        access: "bearer: admin, manager",
+      },
     ],
   },
   {
     title: "Warehouses",
     endpoints: [
-      { method: "GET", path: "/api/warehouses", access: "public", input: "query: q?, status?, page?, limit?" },
+      {
+        method: "GET",
+        path: "/api/warehouses",
+        access: "public",
+        input: "query: q?, status?, page?, limit?",
+      },
       { method: "GET", path: "/api/warehouses/:id", access: "public" },
       {
         method: "POST",
         path: "/api/warehouses",
         access: "no explicit route auth check",
-        input: "multipart/form-data: name, address, manager_id?, capacity, status?",
+        input:
+          "multipart/form-data: name, address, manager_id?, capacity, status?",
       },
       {
         method: "PATCH",
@@ -212,7 +303,11 @@ const sections: Section[] = [
         access: "no explicit route auth check",
         input: "json partial warehouse fields",
       },
-      { method: "DELETE", path: "/api/warehouses/:id", access: "no explicit route auth check" },
+      {
+        method: "DELETE",
+        path: "/api/warehouses/:id",
+        access: "no explicit route auth check",
+      },
     ],
   },
   {
@@ -232,20 +327,33 @@ const sections: Section[] = [
           "json: user_id?, company_name, contact_name, phone?, email, billing_address?, shipping_address?",
         note: "For public signup, use POST /api/auth/register.",
       },
-      { method: "GET", path: "/api/customers/:id", access: "bearer: owner or customers:read" },
+      {
+        method: "GET",
+        path: "/api/customers/:id",
+        access: "bearer: owner or customers:read",
+      },
       {
         method: "PATCH",
         path: "/api/customers/:id",
         access: "bearer: owner or customers:write",
         input: "json partial customer fields",
       },
-      { method: "DELETE", path: "/api/customers/:id", access: "bearer: admin, manager, staff" },
+      {
+        method: "DELETE",
+        path: "/api/customers/:id",
+        access: "bearer: admin, manager, staff",
+      },
     ],
   },
   {
     title: "Cart",
     endpoints: [
-      { method: "GET", path: "/api/cart", access: "bearer: owner or cart:read", input: "query: customer_id" },
+      {
+        method: "GET",
+        path: "/api/cart",
+        access: "bearer: owner or cart:read",
+        input: "query: customer_id",
+      },
       {
         method: "POST",
         path: "/api/cart/items",
@@ -258,7 +366,12 @@ const sections: Section[] = [
         access: "bearer: owner or cart:write",
         input: "query: customer_id",
       },
-      { method: "DELETE", path: "/api/cart", access: "bearer: owner or cart:write", input: "query: customer_id" },
+      {
+        method: "DELETE",
+        path: "/api/cart",
+        access: "bearer: owner or cart:write",
+        input: "query: customer_id",
+      },
       {
         method: "POST",
         path: "/api/cart/checkout",
@@ -282,7 +395,11 @@ const sections: Section[] = [
         access: "bearer: report roles, or owner when filtering by customer_id",
         input: "query: q?, customer_id?, status?, from?, to?",
       },
-      { method: "GET", path: "/api/orders/:id", access: "bearer: owner or orders:read" },
+      {
+        method: "GET",
+        path: "/api/orders/:id",
+        access: "bearer: owner or orders:read",
+      },
       {
         method: "POST",
         path: "/api/orders",
@@ -309,20 +426,24 @@ const sections: Section[] = [
       {
         method: "GET",
         path: "/api/deliveries",
-        access: "bearer: report roles, order owner by order_id, or driver owner by driver_id",
-        input: "query: q?, order_id?, driver_id?, status?, from?, to?, page?, limit?",
+        access:
+          "bearer: report roles, order owner by order_id, or driver owner by driver_id",
+        input:
+          "query: q?, order_id?, driver_id?, status?, from?, to?, page?, limit?",
       },
       {
         method: "GET",
         path: "/api/deliveries/summary",
-        access: "bearer: report roles, order owner by order_id, or driver owner by driver_id",
+        access:
+          "bearer: report roles, order owner by order_id, or driver owner by driver_id",
         input: "query: q?, order_id?, driver_id?, status?, from?, to?",
       },
       {
         method: "POST",
         path: "/api/deliveries",
         access: "bearer: admin, manager",
-        input: "json: order_id, driver_id?, vehicle_number?, status?, scheduled_at?, delivered_at?",
+        input:
+          "json: order_id, driver_id?, vehicle_number?, status?, scheduled_at?, delivered_at?",
       },
       {
         method: "PATCH",
@@ -352,7 +473,8 @@ const sections: Section[] = [
         method: "GET",
         path: "/api/inventory/movements",
         access: "bearer: admin, manager, warehouse_manager, auditor",
-        input: "query: q?, product_id?, movement_type?, from?, to?, page?, limit?",
+        input:
+          "query: q?, product_id?, movement_type?, from?, to?, page?, limit?",
       },
       {
         method: "GET",
@@ -364,7 +486,8 @@ const sections: Section[] = [
         method: "POST",
         path: "/api/inventory",
         access: "bearer: admin, manager, warehouse_manager",
-        input: "json: product_id, movement_type, quantity_change, reference_type?, reference_id?, note?, created_by?",
+        input:
+          "json: product_id, movement_type, quantity_change, reference_type?, reference_id?, note?, created_by?",
         note: "reference_type and reference_id must be paired.",
       },
     ],
@@ -376,7 +499,8 @@ const sections: Section[] = [
         method: "GET",
         path: "/api/payments",
         access: "bearer: admin, finance, auditor, or order owner by order_id",
-        input: "query: q?, order_id?, status?, method?, from?, to?, page?, limit?",
+        input:
+          "query: q?, order_id?, status?, method?, from?, to?, page?, limit?",
       },
       {
         method: "GET",
@@ -388,7 +512,8 @@ const sections: Section[] = [
         method: "POST",
         path: "/api/payments",
         access: "bearer: admin, finance, or order owner",
-        input: "json: order_id, amount, method, status?, transaction_ref?, paid_at?",
+        input:
+          "json: order_id, amount, method, status?, transaction_ref?, paid_at?",
       },
       {
         method: "PATCH",
@@ -401,7 +526,11 @@ const sections: Section[] = [
   {
     title: "Dashboard",
     endpoints: [
-      { method: "GET", path: "/api/dashboard/summary", access: "bearer: admin, manager" },
+      {
+        method: "GET",
+        path: "/api/dashboard/summary",
+        access: "bearer: admin, manager",
+      },
       {
         method: "GET",
         path: "/api/dashboard/recent-activity",
@@ -470,7 +599,6 @@ function renderHtml(): string {
       <pre>${escapeHtml(registerExample)}</pre>
       <pre>${escapeHtml(loginExample)}</pre>
       <pre>${escapeHtml(refreshExample)}</pre>
-      <pre>${escapeHtml(logoutExample)}</pre>
       <pre>${escapeHtml(successExample)}</pre>
       <pre>${escapeHtml(errorExample)}</pre>
     </div>

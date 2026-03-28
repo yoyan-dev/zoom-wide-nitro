@@ -1,12 +1,14 @@
 import type { MultiPartData } from "h3";
-import type { Category } from "../../../types";
+import type { Category } from "../../types";
 import { createCategoryRecord } from "../../repositories/categories/create-category";
 import { createCategorySchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";
 import { parseCategoryMultipartFields } from "../../utils/category-form-data";
 import { mapCategory } from "./map-category";
 
-export async function createCategory(parts: MultiPartData[]): Promise<Category> {
+export async function createCategory(
+  parts: MultiPartData[],
+): Promise<Category> {
   let body: ReturnType<typeof parseCategoryMultipartFields>;
 
   try {

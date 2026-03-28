@@ -1,4 +1,4 @@
-import type { InventoryStockItem, Product } from "../../../types";
+import type { InventoryStockItem, Product } from "../../types";
 import { mapProduct } from "../products/map-product";
 
 export function mapStockViewItem(record: Product): InventoryStockItem {

@@ -1,5 +1,5 @@
 import { setResponseStatus, type H3Event } from "h3";
-import type { H3Response } from "../../types";
+import type { H3Response } from "../types";
 import { toAppError } from "./errors";
 import { apiError } from "./response";
 

@@ -1,4 +1,4 @@
-import type { InventoryLog, PaginatedResult } from "../../../types";
+import type { InventoryLog, PaginatedResult } from "../../types";
 import { listInventoryMovementRecords } from "../../repositories/inventory/list-inventory-movements";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { mapInventoryLog } from "./map-inventory-log";

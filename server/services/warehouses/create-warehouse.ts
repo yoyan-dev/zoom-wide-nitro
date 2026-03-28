@@ -1,5 +1,5 @@
 import type { MultiPartData } from "h3";
-import type { Warehouse } from "../../../types";
+import type { Warehouse } from "../../types";
 import { createWarehouseRecord } from "../../repositories/warehouses/create-warehouse";
 import { createWarehouseSchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";

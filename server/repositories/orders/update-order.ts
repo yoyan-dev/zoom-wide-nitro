@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { updateOrderSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

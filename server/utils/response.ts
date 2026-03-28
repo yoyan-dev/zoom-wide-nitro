@@ -8,7 +8,7 @@ import type {
   NumericSummary,
   StatusMessage,
   SummaryResponse,
-} from "../../types";
+} from "../types";
 
 type ResponseOptions = {
   total?: number;
@@ -80,10 +80,7 @@ function buildErrorResponse(
   };
 }
 
-export function success<T>(
-  data: T,
-  options?: ResponseOptions,
-): H3Response<T> {
+export function success<T>(data: T, options?: ResponseOptions): H3Response<T> {
   return buildSuccessResponse("ok", 200, "ok", data, options);
 }
 

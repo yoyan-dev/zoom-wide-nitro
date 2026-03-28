@@ -1,4 +1,4 @@
-import type { PaginatedResult, Payment } from "../../../types";
+import type { PaginatedResult, Payment } from "../../types";
 import { listPaymentRecords } from "../../repositories/payments/list-payments";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import {

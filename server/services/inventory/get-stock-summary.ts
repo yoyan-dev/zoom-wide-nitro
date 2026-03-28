@@ -1,4 +1,4 @@
-import type { InventoryStockSummary } from "../../../types";
+import type { InventoryStockSummary } from "../../types";
 import { getStockSummaryRecord } from "../../repositories/inventory/get-stock-summary";
 
 export type GetStockSummaryParams = {

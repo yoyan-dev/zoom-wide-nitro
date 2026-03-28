@@ -1,4 +1,4 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { createOrderRequestSchema } from "../../schemas";
 import { badRequestError } from "../../utils/errors";
 import { createPendingOrder } from "./create-pending-order";

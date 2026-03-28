@@ -1,4 +1,4 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { badRequestError, notFoundError } from "../../utils/errors";
 
 export function requireExistingOrder(order: Order | null): Order {

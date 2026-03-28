@@ -1,4 +1,4 @@
-import type { AuthResponseData } from "../../../types";
+import type { AuthResponseData } from "../../types";
 import {
   createSupabaseAuthUser,
   deleteSupabaseAuthUser,

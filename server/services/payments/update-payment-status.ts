@@ -1,4 +1,4 @@
-import type { Payment, PaymentStatus } from "../../../types";
+import type { Payment, PaymentStatus } from "../../types";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { getPaymentByIdRecord } from "../../repositories/payments/get-payment-by-id";
 import { transitionPaymentStatusRecord } from "../../repositories/payments/transition-payment-status";
@@ -50,16 +50,16 @@ export async function updatePaymentStatus(
   }
 
   if (
-    parsedInput.data.status !== "paid"
-    && parsedInput.data.paid_at !== undefined
-    && parsedInput.data.paid_at !== null
+    parsedInput.data.status !== "paid" &&
+    parsedInput.data.paid_at !== undefined &&
+    parsedInput.data.paid_at !== null
   ) {
     throw badRequestError("paid_at can only be set when status is paid");
   }
 
   const nextPaidAt =
     parsedInput.data.status === "paid"
-      ? parsedInput.data.paid_at ?? new Date().toISOString()
+      ? (parsedInput.data.paid_at ?? new Date().toISOString())
       : payment.paid_at;
 
   const updatedPayment = await transitionPaymentStatusRecord(payment.id, {
@@ -68,7 +68,9 @@ export async function updatePaymentStatus(
     transactionRef:
       parsedInput.data.transaction_ref ?? payment.transaction_ref ?? null,
     paidAt:
-      parsedInput.data.status === "refunded" ? payment.paid_at ?? null : nextPaidAt,
+      parsedInput.data.status === "refunded"
+        ? (payment.paid_at ?? null)
+        : nextPaidAt,
   });
 
   if (!updatedPayment) {

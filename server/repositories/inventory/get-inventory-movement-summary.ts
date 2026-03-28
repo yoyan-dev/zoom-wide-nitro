@@ -1,7 +1,7 @@
 import type {
   InventoryMovementSummary,
   InventoryMovementType,
-} from "../../../types";
+} from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,

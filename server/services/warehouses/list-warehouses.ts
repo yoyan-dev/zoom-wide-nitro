@@ -1,4 +1,4 @@
-import type { PaginatedResult, Warehouse } from "../../../types";
+import type { PaginatedResult, Warehouse } from "../../types";
 import { listWarehouseRecords } from "../../repositories/warehouses/list-warehouses";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 

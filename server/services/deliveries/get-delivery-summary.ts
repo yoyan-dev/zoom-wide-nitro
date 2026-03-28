@@ -1,4 +1,4 @@
-import type { DeliveryReportSummary } from "../../../types";
+import type { DeliveryReportSummary } from "../../types";
 import { getDeliverySummaryRecord } from "../../repositories/deliveries/get-delivery-summary";
 import { assertValidDeliveryReportStatus } from "./delivery-reporting";
 

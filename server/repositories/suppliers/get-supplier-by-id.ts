@@ -1,11 +1,13 @@
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
 
-export async function getSupplierByIdRecord(id: string): Promise<Supplier | null> {
+export async function getSupplierByIdRecord(
+  id: string,
+): Promise<Supplier | null> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("suppliers")

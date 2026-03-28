@@ -1,4 +1,4 @@
-import type { Delivery, Order } from "../../../types";
+import type { Delivery, Order } from "../../types";
 
 type DeliveryRecord = Delivery & {
   order?: unknown;

@@ -1,4 +1,4 @@
-import type { DeliveryReportSummary, DeliveryStatus } from "../../../types";
+import type { DeliveryReportSummary, DeliveryStatus } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,

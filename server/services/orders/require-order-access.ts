@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
 import { notFoundError } from "../../utils/errors";
 import {

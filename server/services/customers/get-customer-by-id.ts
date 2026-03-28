@@ -1,4 +1,4 @@
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import { getCustomerByIdRecord } from "../../repositories/customers/get-customer-by-id";
 import { notFoundError } from "../../utils/errors";
 import { string } from "../../utils/validator";

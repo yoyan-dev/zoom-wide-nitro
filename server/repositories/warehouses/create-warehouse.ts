@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Warehouse } from "../../../types";
+import type { Warehouse } from "../../types";
 import { createWarehouseSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

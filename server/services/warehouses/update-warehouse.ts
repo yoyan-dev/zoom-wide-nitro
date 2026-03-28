@@ -1,4 +1,4 @@
-import type { Warehouse } from "../../../types";
+import type { Warehouse } from "../../types";
 import { getWarehouseByIdRecord } from "../../repositories/warehouses/get-warehouse-by-id";
 import { updateWarehouseRecord } from "../../repositories/warehouses/update-warehouse";
 import { updateWarehouseSchema } from "../../schemas";

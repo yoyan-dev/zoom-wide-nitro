@@ -1,4 +1,4 @@
-import type { OrderStatus, Product } from "../../../types";
+import type { OrderStatus, Product } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -28,7 +28,9 @@ export async function getLowStockProductRecords(): Promise<Product[]> {
   return (data ?? []) as Product[];
 }
 
-export async function getRecentProductRecords(limit: number): Promise<Product[]> {
+export async function getRecentProductRecords(
+  limit: number,
+): Promise<Product[]> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("products")
@@ -40,7 +42,9 @@ export async function getRecentProductRecords(limit: number): Promise<Product[]>
   return (data ?? []) as Product[];
 }
 
-export async function getTopSellingProductRecords(): Promise<OrderItemInsightRecord[]> {
+export async function getTopSellingProductRecords(): Promise<
+  OrderItemInsightRecord[]
+> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("order_items")

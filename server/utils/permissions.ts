@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { UserRole } from "../../types";
+import type { UserRole } from "../types";
 import type { AuthenticatedRequestUser } from "./auth";
 import { requireRequestUser } from "./auth";
 import { forbiddenError } from "./errors";
@@ -187,6 +187,9 @@ export function requireOwnershipOrPermission(
   throw forbiddenError(message);
 }
 
-export function getPermissionMatrix(): Record<PermissionAction, readonly UserRole[]> {
+export function getPermissionMatrix(): Record<
+  PermissionAction,
+  readonly UserRole[]
+> {
   return PERMISSION_MATRIX;
 }

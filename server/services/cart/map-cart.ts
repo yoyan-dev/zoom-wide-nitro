@@ -1,4 +1,4 @@
-import type { CartDetail, CartItem, Product } from "../../../types";
+import type { CartDetail, CartItem, Product } from "../../types";
 import type { CartRecord } from "../../repositories/cart/get-active-cart-by-customer-id";
 import { mapProduct } from "../products/map-product";
 

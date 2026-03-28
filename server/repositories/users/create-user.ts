@@ -1,8 +1,9 @@
-import type { User } from "../../../types";
+import type { User } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
+import { USER_SELECT } from "./user-select";
 
 type CreateUserRecordInput = {
   id: string;
@@ -32,7 +33,7 @@ export async function createUserRecord(
   const { data, error } = await supabase
     .from("users")
     .insert(payload)
-    .select("id, email, full_name, role, phone, is_active, created_at, updated_at")
+    .select(USER_SELECT)
     .single();
 
   ensureRepositorySuccess(error);

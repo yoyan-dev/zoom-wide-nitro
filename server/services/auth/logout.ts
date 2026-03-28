@@ -1,4 +1,4 @@
-import type { AuthLogoutResponseData } from "../../../types";
+import type { AuthLogoutResponseData } from "../../types";
 import { signOutSupabaseSession } from "../../lib/supabase";
 import { logoutSchema } from "../../schemas";
 import { badRequestError, unauthorizedError } from "../../utils/errors";
@@ -14,7 +14,9 @@ export async function logout(input: {
   }
 
   if (!input.accessToken) {
-    throw unauthorizedError("Authorization header with Bearer token is required");
+    throw unauthorizedError(
+      "Authorization header with Bearer token is required",
+    );
   }
 
   const scope = parsedBody.data.scope ?? "local";

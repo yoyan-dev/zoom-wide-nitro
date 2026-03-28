@@ -1,4 +1,4 @@
-import type { DashboardSummary } from "../../../types";
+import type { DashboardSummary } from "../../types";
 import { getDashboardBaseCountsRecord } from "../../repositories/dashboard/get-dashboard-summary";
 import { getDeliverySummaryRecord } from "../../repositories/deliveries/get-delivery-summary";
 import { getStockSummaryRecord } from "../../repositories/inventory/get-stock-summary";

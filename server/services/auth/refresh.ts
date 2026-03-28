@@ -1,8 +1,5 @@
-import type { AuthResponseData } from "../../../types";
-import {
-  mapSupabaseSession,
-  refreshSupabaseSession,
-} from "../../lib/supabase";
+import type { AuthResponseData } from "../../types";
+import { mapSupabaseSession, refreshSupabaseSession } from "../../lib/supabase";
 import { refreshSessionSchema } from "../../schemas";
 import {
   badRequestError,

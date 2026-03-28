@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Payment } from "../../../types";
+import type { Payment } from "../../types";
 import { createPaymentSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

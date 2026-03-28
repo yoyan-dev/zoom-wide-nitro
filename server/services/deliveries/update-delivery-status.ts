@@ -1,4 +1,4 @@
-import type { Delivery, DeliveryStatus } from "../../../types";
+import type { Delivery, DeliveryStatus } from "../../types";
 import { getDeliveryByIdRecord } from "../../repositories/deliveries/get-delivery-by-id";
 import { updateDeliveryRecord } from "../../repositories/deliveries/update-delivery";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
@@ -46,11 +46,13 @@ export async function updateDeliveryStatus(
   }
 
   if (
-    parsedInput.data.status !== "delivered"
-    && parsedInput.data.delivered_at !== undefined
-    && parsedInput.data.delivered_at !== null
+    parsedInput.data.status !== "delivered" &&
+    parsedInput.data.delivered_at !== undefined &&
+    parsedInput.data.delivered_at !== null
   ) {
-    throw badRequestError("delivered_at can only be set when status is delivered");
+    throw badRequestError(
+      "delivered_at can only be set when status is delivered",
+    );
   }
 
   const order = requireOrderEligibleForDeliveryUpdate(
@@ -59,7 +61,7 @@ export async function updateDeliveryStatus(
 
   const nextDeliveredAt =
     parsedInput.data.status === "delivered"
-      ? parsedInput.data.delivered_at ?? new Date().toISOString()
+      ? (parsedInput.data.delivered_at ?? new Date().toISOString())
       : null;
 
   const updatedDelivery = await updateDeliveryRecord(deliveryId, {

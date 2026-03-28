@@ -1,4 +1,4 @@
-import type { DeliveryStatus } from "../../../types";
+import type { DeliveryStatus } from "../../types";
 
 export type DeliveryReportFilters = {
   q?: string;
@@ -9,10 +9,9 @@ export type DeliveryReportFilters = {
   to?: string;
 };
 
-export function applyDeliveryReportFilters<TQuery extends { [key: string]: any }>(
-  query: TQuery,
-  filters: DeliveryReportFilters,
-): TQuery {
+export function applyDeliveryReportFilters<
+  TQuery extends { [key: string]: any },
+>(query: TQuery, filters: DeliveryReportFilters): TQuery {
   let nextQuery = query;
 
   if (filters.q) {

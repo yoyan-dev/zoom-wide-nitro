@@ -1,4 +1,4 @@
-import type { Order, PaginatedResult } from "../../../types";
+import type { Order, PaginatedResult } from "../../types";
 import { listOrderRecords } from "../../repositories/orders/list-orders";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { assertValidOrderReportStatus } from "./order-reporting";

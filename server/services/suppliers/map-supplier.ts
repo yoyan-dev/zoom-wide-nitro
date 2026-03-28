@@ -1,4 +1,4 @@
-import type { Supplier } from "../../../types";
+import type { Supplier } from "../../types";
 
 export function mapSupplier(record: Supplier): Supplier {
   return {

@@ -1,4 +1,4 @@
-import type { InventoryStockItem, PaginatedResult } from "../../../types";
+import type { InventoryStockItem, PaginatedResult } from "../../types";
 import { listStockViewRecords } from "../../repositories/inventory/list-stock-view";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { assertValidInventoryStockStatus } from "./inventory-reporting";
@@ -43,15 +43,13 @@ export async function getStockView(
     q: params.q,
     product_id: params.product_id,
   });
-  const filteredData = result.data
-    .map(mapStockViewItem)
-    .filter((item) => {
-      if (stockStatus === "out_of_stock") {
-        return item.stock_quantity <= 0;
-      }
+  const filteredData = result.data.map(mapStockViewItem).filter((item) => {
+    if (stockStatus === "out_of_stock") {
+      return item.stock_quantity <= 0;
+    }
 
-      return item.is_low_stock;
-    });
+    return item.is_low_stock;
+  });
   const paginatedData = filteredData.slice(pagination.from, pagination.to + 1);
 
   return {

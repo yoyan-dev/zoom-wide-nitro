@@ -1,9 +1,6 @@
-import type { User } from "../../../types";
+import type { User } from "../../types";
 import { getUserByIdRecord } from "../../repositories/users/get-user-by-id";
-import {
-  type AuthenticatedRequestUser,
-  isUserRole,
-} from "../../utils/auth";
+import { type AuthenticatedRequestUser, isUserRole } from "../../utils/auth";
 
 type ResolveAuthenticatedUserInput = {
   id: string;

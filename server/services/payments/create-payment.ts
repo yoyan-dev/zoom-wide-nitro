@@ -1,4 +1,4 @@
-import type { Payment } from "../../../types";
+import type { Payment } from "../../types";
 import { createPaymentRecord } from "../../repositories/payments/create-payment";
 import { getPaymentByOrderIdRecord } from "../../repositories/payments/get-payment-by-order-id";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";

@@ -1,4 +1,4 @@
-import type { Customer, PaginatedResult } from "../../../types";
+import type { Customer, PaginatedResult } from "../../types";
 import { listCustomerRecords } from "../../repositories/customers/list-customers";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { mapCustomer } from "./map-customer";

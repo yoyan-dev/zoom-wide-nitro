@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { InventoryLog } from "../../../types";
+import type { InventoryLog } from "../../types";
 import { createInventoryLogSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

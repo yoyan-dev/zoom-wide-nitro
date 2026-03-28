@@ -1,4 +1,4 @@
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 
 export function mapCustomer(record: Customer): Customer {
   return {

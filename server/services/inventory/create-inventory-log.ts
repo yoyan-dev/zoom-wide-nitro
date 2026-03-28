@@ -1,4 +1,4 @@
-import type { InventoryMovementResult } from "../../../types";
+import type { InventoryMovementResult } from "../../types";
 import { createInventoryLogRecord } from "../../repositories/inventory/create-inventory-log";
 import { getProductByIdRecord } from "../../repositories/products/get-product-by-id";
 import { updateProductRecord } from "../../repositories/products/update-product";
@@ -63,7 +63,10 @@ export async function createInventoryLog(
     throw badRequestError("Inventory movement would result in negative stock");
   }
 
-  if (parsedBody.data.movement_type === "adjustment" && nextStock === currentStock) {
+  if (
+    parsedBody.data.movement_type === "adjustment" &&
+    nextStock === currentStock
+  ) {
     throw badRequestError("Adjustment must change stock");
   }
 

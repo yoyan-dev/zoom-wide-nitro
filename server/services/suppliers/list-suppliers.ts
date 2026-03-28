@@ -1,4 +1,4 @@
-import type { PaginatedResult, Supplier } from "../../../types";
+import type { PaginatedResult, Supplier } from "../../types";
 import { listSupplierRecords } from "../../repositories/suppliers/list-suppliers";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { mapSupplier } from "./map-supplier";

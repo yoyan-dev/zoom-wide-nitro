@@ -1,11 +1,14 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import type { RepositoryListResult } from "../../utils/supabase-repository";
 import {
   ensureRepositorySuccess,
   mapListResult,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
-import { applyOrderReportFilters, type OrderReportFilters } from "./apply-order-report-filters";
+import {
+  applyOrderReportFilters,
+  type OrderReportFilters,
+} from "./apply-order-report-filters";
 import { ORDER_DETAIL_SELECT } from "./order-select";
 
 export type ListOrderRecordsParams = OrderReportFilters & {

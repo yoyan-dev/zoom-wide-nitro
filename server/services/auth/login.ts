@@ -1,4 +1,4 @@
-import type { AuthResponseData } from "../../../types";
+import type { AuthResponseData } from "../../types";
 import { mapSupabaseSession, signInWithPassword } from "../../lib/supabase";
 import { loginSchema } from "../../schemas";
 import {

@@ -1,4 +1,4 @@
-import type { InventoryStockSummary, Product } from "../../../types";
+import type { InventoryStockSummary, Product } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -22,7 +22,9 @@ export async function getStockSummaryRecord(
 
   ensureRepositorySuccess(error);
 
-  const rows = (data ?? []) as Array<Pick<Product, "stock_quantity" | "minimum_stock_quantity"> & { id: string }>;
+  const rows = (data ?? []) as Array<
+    Pick<Product, "stock_quantity" | "minimum_stock_quantity"> & { id: string }
+  >;
 
   let totalStockUnits = 0;
   let lowStockProducts = 0;

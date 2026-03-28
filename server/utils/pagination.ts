@@ -1,4 +1,4 @@
-import type { PaginationMeta } from "../../types";
+import type { PaginationMeta } from "../types";
 
 export type PaginationInput = {
   page?: number;

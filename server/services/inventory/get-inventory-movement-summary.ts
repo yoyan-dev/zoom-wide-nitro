@@ -1,4 +1,4 @@
-import type { InventoryMovementSummary } from "../../../types";
+import type { InventoryMovementSummary } from "../../types";
 import { getInventoryMovementSummaryRecord } from "../../repositories/inventory/get-inventory-movement-summary";
 import { assertValidInventoryMovementType } from "./inventory-reporting";
 

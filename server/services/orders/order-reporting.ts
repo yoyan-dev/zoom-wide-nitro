@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { OrderStatus } from "../../../types";
+import type { OrderStatus } from "../../types";
 import { requireCustomerAccess } from "../customers/require-customer-access";
 import { badRequestError } from "../../utils/errors";
 import { requirePermission } from "../../utils/permissions";

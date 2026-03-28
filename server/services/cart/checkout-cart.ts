@@ -1,4 +1,4 @@
-import type { Order } from "../../../types";
+import type { Order } from "../../types";
 import { finalizeCartCheckoutRecord } from "../../repositories/cart/finalize-cart-checkout";
 import { getActiveCartByCustomerIdRecord } from "../../repositories/cart/get-active-cart-by-customer-id";
 import { deleteOrderRecord } from "../../repositories/orders/delete-order";
@@ -13,7 +13,9 @@ export async function checkoutCart(input: unknown): Promise<Order> {
     throw badRequestError(parsedInput.error.message);
   }
 
-  const cart = await getActiveCartByCustomerIdRecord(parsedInput.data.customer_id);
+  const cart = await getActiveCartByCustomerIdRecord(
+    parsedInput.data.customer_id,
+  );
 
   if (!cart) {
     throw notFoundError("Active cart not found");

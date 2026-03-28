@@ -1,4 +1,4 @@
-import type { Warehouse } from "../../../types";
+import type { Warehouse } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,

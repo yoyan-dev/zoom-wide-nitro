@@ -1,4 +1,4 @@
-import type { Cart } from "../../../types";
+import type { Cart } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -6,7 +6,9 @@ import {
 import { CART_DETAIL_SELECT } from "./cart-select";
 import type { CartRecord } from "./get-active-cart-by-customer-id";
 
-export async function createCartRecord(customerId: string): Promise<CartRecord> {
+export async function createCartRecord(
+  customerId: string,
+): Promise<CartRecord> {
   const supabase = useRepositoryClient();
   const now = new Date().toISOString();
 

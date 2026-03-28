@@ -1,4 +1,4 @@
-import type { InventoryMovementType } from "../../../types";
+import type { InventoryMovementType } from "../../types";
 
 export type InventoryMovementReportFilters = {
   q?: string;

@@ -6,13 +6,14 @@ import {
   type User as SupabaseAuthUser,
 } from "@supabase/supabase-js";
 import { useRuntimeConfig } from "nitropack/runtime";
-import type { UserRole } from "../../types";
+import type { UserRole } from "../types";
 
 let supabaseAdmin: SupabaseClient | null = null;
 
 function getSupabaseConfig() {
   const runtimeConfig = useRuntimeConfig();
-  const supabaseUrl = runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
+  const supabaseUrl =
+    runtimeConfig.supabaseUrl || process.env.SUPABASE_URL || "";
   const anonKey =
     runtimeConfig.supabaseAnonKey || process.env.SUPABASE_ANON_KEY || "";
   const serviceRoleKey =
@@ -21,9 +22,7 @@ function getSupabaseConfig() {
     "";
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.",
-    );
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.");
   }
 
   return {
@@ -154,6 +153,60 @@ export async function createSupabaseAuthUser(input: {
 export async function deleteSupabaseAuthUser(userId: string): Promise<void> {
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.auth.admin.deleteUser(userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function updateSupabaseAuthUser(input: {
+  userId: string;
+  email?: string;
+  password?: string;
+  role?: UserRole;
+  fullName?: string;
+  phone?: string | null;
+}): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const payload: Record<string, unknown> = {};
+
+  if (input.email !== undefined) {
+    payload.email = input.email;
+    payload.email_confirm = true;
+  }
+
+  if (input.password !== undefined) {
+    payload.password = input.password;
+  }
+
+  if (input.role !== undefined) {
+    payload.app_metadata = {
+      role: input.role,
+    };
+  }
+
+  if (input.fullName !== undefined || input.phone !== undefined) {
+    const userMetadata: Record<string, unknown> = {};
+
+    if (input.fullName !== undefined) {
+      userMetadata.full_name = input.fullName;
+    }
+
+    if (input.phone !== undefined) {
+      userMetadata.phone = input.phone;
+    }
+
+    payload.user_metadata = userMetadata;
+  }
+
+  if (!Object.keys(payload).length) {
+    return;
+  }
+
+  const { error } = await supabase.auth.admin.updateUserById(
+    input.userId,
+    payload,
+  );
 
   if (error) {
     throw error;

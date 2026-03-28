@@ -1,4 +1,4 @@
-import type { Order, Product } from "../../../types";
+import type { Order, Product } from "../../types";
 import { getCustomerByIdRecord } from "../../repositories/customers/get-customer-by-id";
 import { createOrderRecord } from "../../repositories/orders/create-order";
 import { createOrderItemsRecord } from "../../repositories/orders/create-order-items";
@@ -25,7 +25,10 @@ export type CreatePendingOrderInput = {
   requireSufficientStock?: boolean;
 };
 
-function assertProductReady(product: Product | null, productId: string): Product {
+function assertProductReady(
+  product: Product | null,
+  productId: string,
+): Product {
   if (!product) {
     throw notFoundError(`Product not found: ${productId}`);
   }

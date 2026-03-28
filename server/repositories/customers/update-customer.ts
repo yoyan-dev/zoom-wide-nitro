@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { Customer } from "../../../types";
+import type { Customer } from "../../types";
 import { updateCustomerSchema } from "../../schemas";
 import {
   ensureRepositorySuccess,

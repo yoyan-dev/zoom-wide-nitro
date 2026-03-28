@@ -1,4 +1,4 @@
-import type { Product } from "../../../types";
+import type { Product } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,
@@ -6,7 +6,9 @@ import {
 } from "../../utils/supabase-repository";
 import { PRODUCT_RELATION_SELECT } from "./product-select";
 
-export async function getProductByIdRecord(id: string): Promise<Product | null> {
+export async function getProductByIdRecord(
+  id: string,
+): Promise<Product | null> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("products")

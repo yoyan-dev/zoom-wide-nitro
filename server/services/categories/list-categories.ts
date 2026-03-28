@@ -1,4 +1,4 @@
-import type { Category, PaginatedResult } from "../../../types";
+import type { Category, PaginatedResult } from "../../types";
 import { listCategoryRecords } from "../../repositories/categories/list-categories";
 import { getPagination, getPaginationMeta } from "../../utils/pagination";
 import { mapCategory } from "./map-category";
