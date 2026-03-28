@@ -39,6 +39,7 @@ export async function login(input: unknown): Promise<AuthResponseData> {
   const resolvedUser = await resolveAuthenticatedUser({
     id: data.user.id,
     email: data.user.email ?? parsedInput.data.email,
+    imageUrl: data.user.user_metadata?.image_url ?? null,
     role: data.user.app_metadata?.role ?? data.user.user_metadata?.role ?? null,
   });
 

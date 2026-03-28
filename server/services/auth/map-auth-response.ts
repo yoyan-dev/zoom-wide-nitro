@@ -7,6 +7,7 @@ export function mapAuthUserProfile(user: AuthenticatedRequestUser) {
   return {
     id: user.id,
     email: user.email,
+    image_url: user.imageUrl,
     role: user.role,
     roleSource: user.roleSource,
     is_active: user.isActive,

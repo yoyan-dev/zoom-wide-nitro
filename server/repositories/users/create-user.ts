@@ -11,6 +11,7 @@ type CreateUserRecordInput = {
   full_name: string;
   role: User["role"];
   phone?: string | null;
+  image_url?: string | null;
 };
 
 export async function createUserRecord(
@@ -25,6 +26,7 @@ export async function createUserRecord(
     full_name: input.full_name,
     role: input.role,
     phone: input.phone ?? null,
+    image_url: input.image_url ?? null,
     is_active: true,
     created_at: now,
     updated_at: now,

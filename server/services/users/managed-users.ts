@@ -73,6 +73,7 @@ async function rollbackUserRecordOrThrow(
       full_name: existingUser.full_name,
       role: existingUser.role,
       phone: existingUser.phone,
+      image_url: existingUser.image_url,
       is_active: existingUser.is_active,
     });
 
@@ -139,6 +140,7 @@ export async function updateManagedUser(
     full_name: params.input.full_name,
     role: params.input.role,
     phone: params.input.phone,
+    image_url: params.input.image_url,
     is_active: params.input.is_active,
   };
   const hasUserRecordUpdates = Object.values(userRecordUpdates).some(
@@ -174,7 +176,8 @@ export async function updateManagedUser(
     params.input.password !== undefined ||
     params.input.role !== undefined ||
     params.input.full_name !== undefined ||
-    params.input.phone !== undefined;
+    params.input.phone !== undefined ||
+    params.input.image_url !== undefined;
 
   if (!hasAuthUpdates) {
     return updatedUser;
@@ -188,6 +191,7 @@ export async function updateManagedUser(
       role: params.input.role,
       fullName: params.input.full_name,
       phone: params.input.phone,
+      imageUrl: params.input.image_url,
     });
 
     return updatedUser;

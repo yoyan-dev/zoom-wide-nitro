@@ -1,5 +1,6 @@
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { updateInternalUser } from "../../services/users/update-internal-user";
+import { readUserAccountInput } from "../../utils/account-form-data";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { requireRole } from "../../utils/permissions";
 import { ok } from "../../utils/response";
@@ -10,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
     const user = await updateInternalUser({
       id: getRouterParam(event, "id"),
-      input: await readBody(event),
+      input: await readUserAccountInput(event),
     });
 
     return ok(user, {

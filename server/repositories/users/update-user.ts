@@ -11,6 +11,7 @@ export type UpdateUserRecordInput = {
   full_name?: string;
   role?: User["role"];
   phone?: string | null;
+  image_url?: string | null;
   is_active?: boolean;
 };
 
@@ -25,6 +26,7 @@ export async function updateUserRecord(
       full_name: input.full_name,
       role: input.role,
       phone: input.phone,
+      image_url: input.image_url,
       is_active: input.is_active,
       updated_at: new Date().toISOString(),
     }).filter(([, value]) => value !== undefined),

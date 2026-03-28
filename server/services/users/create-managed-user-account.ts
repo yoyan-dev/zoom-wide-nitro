@@ -12,6 +12,7 @@ type CreateManagedUserAccountInput = {
   full_name: string;
   role: UserRole;
   phone?: string | null;
+  image_url?: string | null;
 };
 
 function isDuplicateUserError(error: unknown): boolean {
@@ -37,6 +38,7 @@ export async function createManagedUserAccount(
       role: input.role,
       fullName: input.full_name,
       phone: input.phone ?? null,
+      imageUrl: input.image_url ?? null,
     });
 
     authUserId = authUser.id;
@@ -47,6 +49,7 @@ export async function createManagedUserAccount(
       full_name: input.full_name,
       role: input.role,
       phone: input.phone ?? null,
+      image_url: input.image_url ?? null,
     });
   } catch (error) {
     if (authUserId) {

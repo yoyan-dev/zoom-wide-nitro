@@ -88,7 +88,7 @@ const sections: Section[] = [
         path: "/api/auth/register",
         access: "public",
         input:
-          "json: email, password, company_name, contact_name, phone?, billing_address?, shipping_address?",
+          "json or multipart/form-data: email, password, company_name, contact_name, phone?, image_url? or profile image file, billing_address?, shipping_address?",
         note: "Customer-only signup. Call login after register.",
       },
       {
@@ -112,6 +112,39 @@ const sections: Section[] = [
         input: "json: refresh_token, scope?",
         note: "Revokes the current session by default. Use scope=global to revoke all sessions.",
       },
+      {
+        method: "POST",
+        path: "/api/auth/forgot-password",
+        access: "public",
+        input: "json: email, redirect_to?",
+        note: "Sends a password reset email through Supabase.",
+      },
+    ],
+  },
+  {
+    title: "Account",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/account",
+        access: "bearer: any authenticated active user",
+        note: "Returns the logged-in user's account plus related customer or driver profile when available.",
+      },
+      {
+        method: "PATCH",
+        path: "/api/account",
+        access: "bearer: any authenticated active user",
+        input:
+          "json or multipart/form-data: email?, phone?, image_url? or profile image file, full_name?/name?/contact_name?, company_name?, billing_address?, shipping_address?, license_number?, vehicle_number?",
+        note: "Updates the logged-in user's own account. Allowed fields depend on the user's role.",
+      },
+      {
+        method: "POST",
+        path: "/api/account/change-password",
+        access: "bearer: any authenticated active user",
+        input: "json: current_password, new_password",
+        note: "Changes the logged-in user's password after verifying the current password.",
+      },
     ],
   },
   {
@@ -128,7 +161,8 @@ const sections: Section[] = [
         method: "POST",
         path: "/api/users",
         access: "bearer: admin",
-        input: "json: email, password, full_name, phone?, role",
+        input:
+          "json or multipart/form-data: email, password, full_name, phone?, image_url? or profile image file, role",
         note: "Creates internal accounts for roles: admin, manager, staff, warehouse_manager, finance, supplier, auditor. Use /api/drivers for driver accounts and /api/auth/register for customers.",
       },
       {
@@ -140,7 +174,8 @@ const sections: Section[] = [
         method: "PATCH",
         path: "/api/users/:id",
         access: "bearer: admin",
-        input: "json: email?, password?, full_name?, phone?, role?, is_active?",
+        input:
+          "json or multipart/form-data: email?, password?, full_name?, phone?, image_url? or profile image file, role?, is_active?",
       },
       {
         method: "DELETE",
@@ -162,8 +197,9 @@ const sections: Section[] = [
         method: "POST",
         path: "/api/drivers",
         access: "bearer: admin, staff",
-        input: "json: email, password, full_name, phone?",
-        note: "Creates a user account with the driver role.",
+        input:
+          "json or multipart/form-data: email, password, name, phone?, image_url? or profile image file, license_number?, vehicle_number?",
+        note: "Creates a driver profile plus a linked auth/user account with the driver role.",
       },
       {
         method: "GET",
@@ -174,7 +210,8 @@ const sections: Section[] = [
         method: "PATCH",
         path: "/api/drivers/:id",
         access: "bearer: admin, staff",
-        input: "json: email?, password?, full_name?, phone?, is_active?",
+        input:
+          "json or multipart/form-data: email?, password?, name?, phone?, image_url? or profile image file, license_number?, vehicle_number?, is_active?",
       },
       {
         method: "DELETE",
@@ -324,7 +361,7 @@ const sections: Section[] = [
         path: "/api/customers",
         access: "bearer: admin, manager, staff",
         input:
-          "json: user_id?, company_name, contact_name, phone?, email, billing_address?, shipping_address?",
+          "json or multipart/form-data: user_id?, company_name, contact_name, phone?, email, image_url? or profile image file, billing_address?, shipping_address?",
         note: "For public signup, use POST /api/auth/register.",
       },
       {
@@ -336,7 +373,8 @@ const sections: Section[] = [
         method: "PATCH",
         path: "/api/customers/:id",
         access: "bearer: owner or customers:write",
-        input: "json partial customer fields",
+        input:
+          "json or multipart/form-data partial customer fields, optional profile image file",
       },
       {
         method: "DELETE",
@@ -444,6 +482,7 @@ const sections: Section[] = [
         access: "bearer: admin, manager",
         input:
           "json: order_id, driver_id?, vehicle_number?, status?, scheduled_at?, delivered_at?",
+        note: "driver_id must be a driver record id from /api/drivers.",
       },
       {
         method: "PATCH",

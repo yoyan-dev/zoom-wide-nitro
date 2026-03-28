@@ -5,6 +5,7 @@ export * from "./category";
 export * from "./customer";
 export * from "./dashboard";
 export * from "./delivery";
+export * from "./driver";
 export * from "./inventory";
 export * from "./order";
 export * from "./pagination";

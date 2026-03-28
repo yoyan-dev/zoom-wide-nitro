@@ -1,5 +1,6 @@
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { updateDriverAccount } from "../../services/drivers/update-driver-account";
+import { readDriverAccountInput } from "../../utils/account-form-data";
 import { handleRouteError } from "../../utils/handle-route-error";
 import { requireRole } from "../../utils/permissions";
 import { ok } from "../../utils/response";
@@ -14,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
     const driver = await updateDriverAccount({
       id: getRouterParam(event, "id"),
-      input: await readBody(event),
+      input: await readDriverAccountInput(event),
     });
 
     return ok(driver, {

@@ -20,6 +20,7 @@ export async function createCustomerRecord(
     contact_name: input.contact_name,
     phone: input.phone ?? null,
     email: input.email,
+    image_url: input.image_url ?? null,
     billing_address: input.billing_address ?? null,
     shipping_address: input.shipping_address ?? null,
     created_at: now,

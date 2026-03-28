@@ -43,6 +43,10 @@ export async function refreshAuthSession(
   const resolvedUser = await resolveAuthenticatedUser({
     id: data.user.id,
     email: data.user.email ?? data.session.user.email ?? null,
+    imageUrl:
+      data.user.user_metadata?.image_url ??
+      data.session.user.user_metadata?.image_url ??
+      null,
     role:
       data.user.app_metadata?.role ??
       data.user.user_metadata?.role ??

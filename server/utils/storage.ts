@@ -75,3 +75,38 @@ export async function uploadProductImage(part: MultiPartData): Promise<string> {
 
   return data.publicUrl;
 }
+
+export async function uploadUserImage(part: MultiPartData): Promise<string> {
+  ensureImagePart(part);
+
+  const runtimeConfig = useRuntimeConfig();
+  const bucket =
+    runtimeConfig.supabaseUserImagesBucket ||
+    process.env.SUPABASE_USER_IMAGES_BUCKET ||
+    "user-images";
+  const extension = resolveFileExtension(part);
+  const baseName = sanitizeFilename(
+    part.filename ? part.filename.replace(/\.[^.]+$/, "") : "user-image",
+  );
+  const objectPath = `users/${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${baseName || "image"}${extension}`;
+  const supabase = getSupabaseAdmin();
+
+  const { error: uploadError } = await supabase.storage
+    .from(bucket)
+    .upload(objectPath, part.data, {
+      contentType: part.type || "application/octet-stream",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    throw internalServerError(uploadError.message);
+  }
+
+  const { data } = supabase.storage.from(bucket).getPublicUrl(objectPath);
+
+  if (!data.publicUrl) {
+    throw internalServerError("Unable to resolve uploaded user image URL");
+  }
+
+  return data.publicUrl;
+}

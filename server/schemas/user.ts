@@ -5,6 +5,7 @@ const managedUserAccountSchema = z.object({
   password: z.string().min(8).max(128),
   full_name: z.string().trim().min(1).max(160),
   phone: z.string().trim().min(1).max(60).nullable().optional(),
+  image_url: z.string().trim().url().nullable().optional(),
 });
 
 const managedUserAccountUpdateSchema = z.object({
@@ -12,6 +13,7 @@ const managedUserAccountUpdateSchema = z.object({
   password: z.string().min(8).max(128).optional(),
   full_name: z.string().trim().min(1).max(160).optional(),
   phone: z.string().trim().min(1).max(60).nullable().optional(),
+  image_url: z.string().trim().url().nullable().optional(),
   is_active: z.boolean().optional(),
 });
 
@@ -31,10 +33,6 @@ export const createInternalUserSchema = managedUserAccountSchema.extend({
   role: internalUserRoleSchema,
 });
 
-export const createDriverAccountSchema = managedUserAccountSchema;
-
 export const updateInternalUserSchema = managedUserAccountUpdateSchema.extend({
   role: internalUserRoleSchema.optional(),
 });
-
-export const updateDriverAccountSchema = managedUserAccountUpdateSchema;

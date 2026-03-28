@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
   const resolvedUser = await resolveAuthenticatedUser({
     id: authUser.id,
     email: authUser.email ?? null,
+    imageUrl: authUser.user_metadata?.image_url ?? null,
     role: authUser.app_metadata?.role ?? authUser.user_metadata?.role ?? null,
   });
 

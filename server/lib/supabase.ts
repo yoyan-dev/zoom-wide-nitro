@@ -102,6 +102,17 @@ export async function refreshSupabaseSession(
   });
 }
 
+export async function sendSupabasePasswordResetEmail(input: {
+  email: string;
+  redirectTo?: string;
+}) {
+  const supabase = getSupabaseAuthClient();
+
+  return supabase.auth.resetPasswordForEmail(input.email, {
+    redirectTo: input.redirectTo,
+  });
+}
+
 export async function signOutSupabaseSession(input: {
   accessToken: string;
   refreshToken: string;
@@ -128,6 +139,7 @@ export async function createSupabaseAuthUser(input: {
   role: UserRole;
   fullName: string;
   phone?: string | null;
+  imageUrl?: string | null;
 }): Promise<SupabaseAuthUser> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase.auth.admin.createUser({
@@ -140,6 +152,7 @@ export async function createSupabaseAuthUser(input: {
     user_metadata: {
       full_name: input.fullName,
       phone: input.phone ?? null,
+      image_url: input.imageUrl ?? null,
     },
   });
 
@@ -166,6 +179,7 @@ export async function updateSupabaseAuthUser(input: {
   role?: UserRole;
   fullName?: string;
   phone?: string | null;
+  imageUrl?: string | null;
 }): Promise<void> {
   const supabase = getSupabaseAdmin();
   const payload: Record<string, unknown> = {};
@@ -185,7 +199,11 @@ export async function updateSupabaseAuthUser(input: {
     };
   }
 
-  if (input.fullName !== undefined || input.phone !== undefined) {
+  if (
+    input.fullName !== undefined ||
+    input.phone !== undefined ||
+    input.imageUrl !== undefined
+  ) {
     const userMetadata: Record<string, unknown> = {};
 
     if (input.fullName !== undefined) {
@@ -194,6 +212,10 @@ export async function updateSupabaseAuthUser(input: {
 
     if (input.phone !== undefined) {
       userMetadata.phone = input.phone;
+    }
+
+    if (input.imageUrl !== undefined) {
+      userMetadata.image_url = input.imageUrl;
     }
 
     payload.user_metadata = userMetadata;

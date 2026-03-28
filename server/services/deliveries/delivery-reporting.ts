@@ -1,9 +1,11 @@
 import type { H3Event } from "h3";
 import type { DeliveryStatus } from "../../types";
-import { badRequestError } from "../../utils/errors";
+import { badRequestError, forbiddenError } from "../../utils/errors";
 import { requireOrderAccess } from "../orders/require-order-access";
+import { getDriverByUserId } from "../drivers/get-driver-by-user-id";
 import {
-  requireOwnershipOrPermission,
+  hasPermission,
+  requireActiveRequestUser,
   requirePermission,
 } from "../../utils/permissions";
 
@@ -56,11 +58,20 @@ export async function requireDeliveryReportAccess(
   }
 
   if (params.driverId) {
-    requireOwnershipOrPermission(
-      event,
-      params.driverId,
-      "deliveries:report",
-      "You do not have permission to view deliveries for this driver",
-    );
+    const user = requireActiveRequestUser(event);
+
+    if (user.role === "driver") {
+      const driver = await getDriverByUserId(user.id);
+
+      if (!driver || driver.id !== params.driverId) {
+        throw forbiddenError(
+          "You do not have permission to view deliveries for this driver",
+        );
+      }
+    } else if (!hasPermission(user, "deliveries:report")) {
+      throw forbiddenError(
+        "You do not have permission to view deliveries for this driver",
+      );
+    }
   }
 }
