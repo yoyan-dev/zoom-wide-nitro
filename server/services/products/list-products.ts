@@ -6,7 +6,6 @@ import { mapProduct } from "./map-product";
 export type ListProductsParams = {
   q?: string;
   category_id?: string;
-  supplier_id?: string;
   page?: number;
   limit?: number;
 };
@@ -22,7 +21,6 @@ export async function listProducts(
   const result = await listProductRecords({
     q: params.q,
     category_id: params.category_id,
-    supplier_id: params.supplier_id,
     from: pagination.from,
     to: pagination.to,
   });

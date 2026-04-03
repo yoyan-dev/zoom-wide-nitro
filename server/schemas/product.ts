@@ -15,7 +15,6 @@ export const productHandbookDetailsSchema = z.object({
 
 export const createProductSchema = z.object({
   category_id: textIdSchema,
-  supplier_id: textIdSchema.nullable().optional(),
   warehouse_id: textIdSchema.nullable().optional(),
   sku: z.string().trim().min(1).max(60),
   name: z.string().trim().min(1).max(160),
@@ -34,5 +33,4 @@ export const updateProductSchema = createProductSchema.partial();
 export const productQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().optional(),
   category_id: z.string().trim().optional(),
-  supplier_id: z.string().trim().optional(),
 });

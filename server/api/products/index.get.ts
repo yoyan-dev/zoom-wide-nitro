@@ -11,8 +11,6 @@ export default defineEventHandler(async (event) => {
       q: (value) => optional(value, (current) => string(current, "q")),
       category_id: (value) =>
         optional(value, (current) => string(current, "category_id")),
-      supplier_id: (value) =>
-        optional(value, (current) => string(current, "supplier_id")),
       page: (value) => optional(value, (current) => number(current, "page")) ?? 1,
       limit: (value) =>
         optional(value, (current) => number(current, "limit")) ?? 10,

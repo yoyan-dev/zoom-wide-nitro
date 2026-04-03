@@ -1,10 +1,8 @@
-import type { Category, Product, Supplier, Warehouse } from "../../types";
+import type { Category, Product, Warehouse } from "../../types";
 import { mapCategory } from "../categories/map-category";
-import { mapSupplier } from "../suppliers/map-supplier";
 
 type ProductRecord = Product & {
   category?: unknown;
-  supplier?: unknown;
   warehouse?: unknown;
 };
 
@@ -26,9 +24,6 @@ export function mapProduct(record: ProductRecord): Product {
     handbook: record.handbook ?? undefined,
     category: isRecord(record.category)
       ? mapCategory(record.category as Category)
-      : undefined,
-    supplier: isRecord(record.supplier)
-      ? mapSupplier(record.supplier as Supplier)
       : undefined,
     warehouse: isRecord(record.warehouse)
       ? mapWarehouse(record.warehouse as Warehouse)

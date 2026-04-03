@@ -73,7 +73,6 @@ function parseOptionalJson(parts: MultiPartData[], field: string) {
 export function parseProductMultipartFields(parts: MultiPartData[]) {
   return {
     category_id: parseOptionalString(parts, "category_id"),
-    supplier_id: parseOptionalString(parts, "supplier_id"),
     warehouse_id: parseOptionalString(parts, "warehouse_id"),
     sku: parseOptionalString(parts, "sku"),
     name: parseOptionalString(parts, "name"),
@@ -188,16 +187,6 @@ export function parseInventoryMultipartFields(parts: MultiPartData[]) {
     reference_id: parseOptionalString(parts, "reference_id"),
     note: parseOptionalString(parts, "note"),
     created_by: parseOptionalString(parts, "created_by"),
-  };
-}
-
-export function parseSupplierMultipartFields(parts: MultiPartData[]) {
-  return {
-    name: parseOptionalString(parts, "name"),
-    contact_name: parseOptionalString(parts, "contact_name"),
-    phone: parseOptionalString(parts, "phone"),
-    email: parseOptionalString(parts, "email"),
-    address: parseOptionalString(parts, "address"),
   };
 }
 

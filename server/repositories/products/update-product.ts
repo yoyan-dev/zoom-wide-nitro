@@ -18,7 +18,6 @@ export async function updateProductRecord(
   const updates = Object.fromEntries(
     Object.entries({
       category_id: input.category_id,
-      supplier_id: input.supplier_id,
       warehouse_id: input.warehouse_id,
       sku: input.sku,
       name: input.name,
