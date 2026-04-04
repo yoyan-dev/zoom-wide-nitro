@@ -10,7 +10,7 @@ import { requireOrderEligibleForDeliveryUpdate } from "../orders/order-workflow-
 import { mapDelivery } from "./map-delivery";
 
 const DELIVERY_TRANSITIONS: Record<DeliveryStatus, DeliveryStatus[]> = {
-  scheduled: ["in_transit", "failed", "cancelled"],
+  scheduled: ["in_transit", "delivered", "failed", "cancelled"],
   in_transit: ["delivered", "failed", "cancelled"],
   delivered: [],
   failed: [],
