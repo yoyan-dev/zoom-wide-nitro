@@ -16,16 +16,6 @@ const PERMISSION_MATRIX = {
     "auditor",
   ],
   "categories:write": ["admin", "manager"],
-  "suppliers:read": [
-    "admin",
-    "manager",
-    "staff",
-    "warehouse_manager",
-    "finance",
-    "supplier",
-    "auditor",
-  ],
-  "suppliers:write": ["admin", "manager"],
   "products:read": [
     "admin",
     "manager",

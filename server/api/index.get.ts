@@ -257,7 +257,7 @@ const sections: Section[] = [
         method: "GET",
         path: "/api/products",
         access: "public",
-        input: "query: q?, category_id?, supplier_id?, page?, limit?",
+        input: "query: q?, category_id?, page?, limit?",
       },
       { method: "GET", path: "/api/products/:id", access: "public" },
       {
@@ -265,7 +265,7 @@ const sections: Section[] = [
         path: "/api/products",
         access: "bearer: admin, manager, warehouse_manager",
         input:
-          "multipart/form-data: category_id, supplier_id?, warehouse_id?, sku, name, description?, image_url? or image file, unit, price, stock_quantity?, minimum_stock_quantity?, handbook(json), is_active?",
+          "multipart/form-data: category_id, warehouse_id?, sku, name, description?, image_url? or image file, unit, price, stock_quantity?, minimum_stock_quantity?, handbook(json), is_active?",
       },
       {
         method: "PATCH",
@@ -284,36 +284,6 @@ const sections: Section[] = [
         path: "/api/products/insights",
         access: "bearer: admin, manager, warehouse_manager",
         input: "query: limit?",
-      },
-    ],
-  },
-  {
-    title: "Suppliers",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/suppliers",
-        access: "public",
-        input: "query: q?, page?, limit?",
-      },
-      { method: "GET", path: "/api/suppliers/:id", access: "public" },
-      {
-        method: "POST",
-        path: "/api/suppliers",
-        access: "bearer: admin, manager",
-        input:
-          "multipart/form-data: name, contact_name?, phone?, email?, address?",
-      },
-      {
-        method: "PATCH",
-        path: "/api/suppliers/:id",
-        access: "bearer: admin, manager",
-        input: "json partial supplier fields",
-      },
-      {
-        method: "DELETE",
-        path: "/api/suppliers/:id",
-        access: "bearer: admin, manager",
       },
     ],
   },
@@ -380,6 +350,38 @@ const sections: Section[] = [
         method: "DELETE",
         path: "/api/customers/:id",
         access: "bearer: admin, manager, staff",
+      },
+      {
+        method: "GET",
+        path: "/api/customers/:id/addresses",
+        access: "bearer: owner or customers:read",
+        input: "query: q?, page?, limit?",
+        note: "Lists delivery addresses for a customer.",
+      },
+      {
+        method: "POST",
+        path: "/api/customers/:id/addresses",
+        access: "bearer: owner or customers:write",
+        input:
+          "json: street, city, province, postal_code?, country?, address_line?",
+        note: "Creates a delivery address for a customer.",
+      },
+      {
+        method: "GET",
+        path: "/api/customers/:id/addresses/:addressId",
+        access: "bearer: owner or customers:read",
+      },
+      {
+        method: "PATCH",
+        path: "/api/customers/:id/addresses/:addressId",
+        access: "bearer: owner or customers:write",
+        input:
+          "json partial address fields: street?, city?, province?, postal_code?, country?, address_line?",
+      },
+      {
+        method: "DELETE",
+        path: "/api/customers/:id/addresses/:addressId",
+        access: "bearer: owner or customers:write",
       },
     ],
   },

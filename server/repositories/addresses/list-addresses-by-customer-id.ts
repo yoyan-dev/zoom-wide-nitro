@@ -1,4 +1,4 @@
-import type { Supplier } from "../../types";
+import type { Address } from "../../types";
 import type { RepositoryListResult } from "../../utils/supabase-repository";
 import {
   ensureRepositorySuccess,
@@ -6,32 +6,34 @@ import {
   useRepositoryClient,
 } from "../../utils/supabase-repository";
 
-export type ListSupplierRecordsParams = {
+export type ListAddressRecordsParams = {
+  customerId: string;
   q?: string;
   from: number;
   to: number;
 };
 
-export async function listSupplierRecords(
-  params: ListSupplierRecordsParams,
-): Promise<RepositoryListResult<Supplier>> {
+export async function listAddressRecordsByCustomerId(
+  params: ListAddressRecordsParams,
+): Promise<RepositoryListResult<Address>> {
   const supabase = useRepositoryClient();
 
   let query = supabase
-    .from("suppliers")
+    .from("customer_addresses")
     .select("*", { count: "exact" })
+    .eq("customer_id", params.customerId)
     .order("created_at", { ascending: false })
     .range(params.from, params.to);
 
   if (params.q) {
     query = query.or(
       [
-        `id.ilike.%${params.q}%`,
-        `name.ilike.%${params.q}%`,
-        `contact_name.ilike.%${params.q}%`,
-        `email.ilike.%${params.q}%`,
-        `phone.ilike.%${params.q}%`,
-        `address.ilike.%${params.q}%`,
+        `street.ilike.%${params.q}%`,
+        `city.ilike.%${params.q}%`,
+        `province.ilike.%${params.q}%`,
+        `postal_code.ilike.%${params.q}%`,
+        `country.ilike.%${params.q}%`,
+        `address_line.ilike.%${params.q}%`,
       ].join(","),
     );
   }
@@ -40,7 +42,7 @@ export async function listSupplierRecords(
 
   ensureRepositorySuccess(error);
   return mapListResult({
-    data: (data ?? []) as Supplier[],
+    data: (data ?? []) as Address[],
     count,
   });
 }

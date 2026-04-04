@@ -10,7 +10,6 @@ import { PRODUCT_RELATION_SELECT } from "./product-select";
 export type ListProductRecordsParams = {
   q?: string;
   category_id?: string;
-  supplier_id?: string;
   from: number;
   to: number;
 };
@@ -38,10 +37,6 @@ export async function listProductRecords(
 
   if (params.category_id) {
     query = query.eq("category_id", params.category_id);
-  }
-
-  if (params.supplier_id) {
-    query = query.eq("supplier_id", params.supplier_id);
   }
 
   const { data, error, count } = await query;
