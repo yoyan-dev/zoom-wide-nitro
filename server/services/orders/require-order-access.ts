@@ -1,12 +1,15 @@
 import type { H3Event } from "h3";
 import type { Order } from "../../types";
+import { getDeliveryByOrderIdRecord } from "../../repositories/deliveries/get-delivery-by-order-id";
 import { getOrderByIdRecord } from "../../repositories/orders/get-order-by-id";
-import { notFoundError } from "../../utils/errors";
+import { forbiddenError, notFoundError } from "../../utils/errors";
 import {
   type PermissionAction,
+  requireActiveRequestUser,
   requireOwnershipOrPermission,
 } from "../../utils/permissions";
 import { string } from "../../utils/validator";
+import { getDriverByUserId } from "../drivers/get-driver-by-user-id";
 import { mapOrder } from "./map-order";
 
 export async function requireOrderAccess(
@@ -23,6 +26,22 @@ export async function requireOrderAccess(
   }
 
   const mappedOrder = mapOrder(order);
+  const requestUser = requireActiveRequestUser(event);
+
+  if (requestUser.role === "driver") {
+    const [driver, delivery] = await Promise.all([
+      getDriverByUserId(requestUser.id),
+      getDeliveryByOrderIdRecord(mappedOrder.id),
+    ]);
+
+    if (!driver || delivery?.driver_id !== driver.id) {
+      throw forbiddenError(
+        "Drivers can only access orders assigned to them",
+      );
+    }
+
+    return mappedOrder;
+  }
 
   requireOwnershipOrPermission(
     event,

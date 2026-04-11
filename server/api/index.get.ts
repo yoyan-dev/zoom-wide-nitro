@@ -218,6 +218,26 @@ const sections: Section[] = [
         path: "/api/drivers/:id",
         access: "bearer: admin, staff",
       },
+      {
+        method: "GET",
+        path: "/api/drivers/:id/orders",
+        access: "bearer: driver owner, admin, staff",
+        input: "query: q?, status?, from?, to?, page?, limit?",
+        note: "Drivers can only use their own driver id. Lists that driver's assigned orders together with their delivery records.",
+      },
+      {
+        method: "GET",
+        path: "/api/drivers/:id/orders/:orderId",
+        access: "bearer: driver owner, admin, staff",
+        note: "Drivers can only access order ids that are assigned to them. Returns a single assigned order plus its delivery details.",
+      },
+      {
+        method: "POST",
+        path: "/api/drivers/:id/orders/:orderId/delivered",
+        access: "bearer: driver owner, admin, staff",
+        input: "json: delivered_at?",
+        note: "Drivers can only mark their own assigned orders as delivered. Completes the delivery record and the related order workflow.",
+      },
     ],
   },
   {
