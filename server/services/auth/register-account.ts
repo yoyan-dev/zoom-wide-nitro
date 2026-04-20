@@ -5,8 +5,10 @@ import {
 } from "../../lib/supabase";
 import { createCustomerRecord } from "../../repositories/customers/create-customer";
 import { deleteCustomerRecord } from "../../repositories/customers/delete-customer";
+import { createDriverRecord } from "../../repositories/drivers/create-driver";
+import { deleteDriverRecord } from "../../repositories/drivers/delete-driver";
 import { createUserRecord } from "../../repositories/users/create-user";
-import { registerCustomerSchema } from "../../schemas";
+import { registerAccountSchema } from "../../schemas";
 import {
   badRequestError,
   conflictError,
@@ -26,10 +28,10 @@ function isDuplicateUserError(error: unknown): boolean {
   );
 }
 
-export async function registerCustomer(
+export async function registerAccount(
   input: unknown,
 ): Promise<AuthResponseData> {
-  const parsedInput = registerCustomerSchema.safeParse(input);
+  const parsedInput = registerAccountSchema.safeParse(input);
 
   if (!parsedInput.success) {
     throw badRequestError(parsedInput.error.message);
@@ -38,12 +40,14 @@ export async function registerCustomer(
   const { data } = parsedInput;
   let authUserId: string | null = null;
   let customerId: string | null = null;
+  let driverId: string | null = null;
 
   try {
     const authUser = await createSupabaseAuthUser({
       email: data.email,
       password: data.password,
-      role: "customer",
+      role: data.role,
+      customerType: data.role === "customer" ? data.customer_type : null,
       fullName: data.contact_name,
       phone: data.phone ?? null,
       imageUrl: data.image_url ?? null,
@@ -55,29 +59,48 @@ export async function registerCustomer(
       id: authUser.id,
       email: data.email,
       full_name: data.contact_name,
-      role: "customer",
+      role: data.role,
+      customer_type: data.role === "customer" ? data.customer_type : null,
       phone: data.phone ?? null,
       image_url: data.image_url ?? null,
     });
 
-    const customer = await createCustomerRecord({
-      user_id: authUser.id,
-      company_name: data.company_name,
-      contact_name: data.contact_name,
-      phone: data.phone ?? null,
-      email: data.email,
-      image_url: data.image_url ?? null,
-      billing_address: data.billing_address ?? null,
-      shipping_address: data.shipping_address ?? null,
-    });
+    if (data.role === "customer") {
+      const customer = await createCustomerRecord({
+        user_id: authUser.id,
+        company_name: data.company_name as string,
+        contact_name: data.contact_name,
+        phone: data.phone ?? null,
+        email: data.email,
+        image_url: data.image_url ?? null,
+        billing_address: data.billing_address ?? null,
+        shipping_address: data.shipping_address ?? null,
+      });
 
-    customerId = customer.id;
+      customerId = customer.id;
+    }
+
+    if (data.role === "driver") {
+      const driver = await createDriverRecord({
+        user_id: authUser.id,
+        name: data.contact_name,
+        phone: data.phone ?? null,
+        email: data.email,
+        image_url: data.image_url ?? null,
+        license_number: null,
+        vehicle_number: null,
+        is_active: true,
+      });
+
+      driverId = driver.id;
+    }
 
     const resolvedUser = await resolveAuthenticatedUser({
       id: authUser.id,
       email: data.email,
       imageUrl: data.image_url ?? null,
-      role: "customer",
+      role: data.role,
+      customerType: data.role === "customer" ? data.customer_type : null,
     });
 
     return buildAuthResponseData({
@@ -85,12 +108,22 @@ export async function registerCustomer(
       session: null,
     });
   } catch (error) {
+    if (driverId) {
+      try {
+        await deleteDriverRecord(driverId);
+      } catch {
+        throw internalServerError(
+          "Account registration failed and driver cleanup could not be completed",
+        );
+      }
+    }
+
     if (customerId) {
       try {
         await deleteCustomerRecord(customerId);
       } catch {
         throw internalServerError(
-          "Customer registration failed and cleanup could not be completed",
+          "Account registration failed and customer cleanup could not be completed",
         );
       }
     }
@@ -100,7 +133,7 @@ export async function registerCustomer(
         await deleteSupabaseAuthUser(authUserId);
       } catch {
         throw internalServerError(
-          "Customer registration failed and auth cleanup could not be completed",
+          "Account registration failed and auth cleanup could not be completed",
         );
       }
     }
@@ -113,6 +146,6 @@ export async function registerCustomer(
       throw internalServerError(error.message);
     }
 
-    throw internalServerError("Unable to register customer");
+    throw internalServerError("Unable to register account");
   }
 }

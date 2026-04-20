@@ -1,4 +1,5 @@
 import type { User } from "../../types";
+import type { CustomerType } from "../../types";
 import {
   ensureRepositorySuccess,
   useRepositoryClient,
@@ -10,6 +11,7 @@ type CreateUserRecordInput = {
   email: string;
   full_name: string;
   role: User["role"];
+  customer_type?: CustomerType | null;
   phone?: string | null;
   image_url?: string | null;
 };
@@ -25,6 +27,7 @@ export async function createUserRecord(
     email: input.email,
     full_name: input.full_name,
     role: input.role,
+    customer_type: input.customer_type ?? null,
     phone: input.phone ?? null,
     image_url: input.image_url ?? null,
     is_active: true,

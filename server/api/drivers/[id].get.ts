@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
   try {
     requireRole(
       event,
-      ["admin", "staff"],
-      "Only admin or staff users can view driver accounts",
+      "admin",
+      "Only admin users can view driver accounts",
     );
 
     const driver = await getDriverById(getRouterParam(event, "id"));

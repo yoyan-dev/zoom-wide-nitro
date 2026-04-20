@@ -10,6 +10,7 @@ export type UpdateUserRecordInput = {
   email?: string;
   full_name?: string;
   role?: User["role"];
+  customer_type?: User["customer_type"];
   phone?: string | null;
   image_url?: string | null;
   is_active?: boolean;
@@ -25,6 +26,7 @@ export async function updateUserRecord(
       email: input.email,
       full_name: input.full_name,
       role: input.role,
+      customer_type: input.customer_type,
       phone: input.phone,
       image_url: input.image_url,
       is_active: input.is_active,

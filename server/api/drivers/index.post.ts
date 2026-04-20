@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
   try {
     requireRole(
       event,
-      ["admin", "staff"],
-      "Only admin or staff users can create driver accounts",
+      "admin",
+      "Only admin users can create driver accounts",
     );
 
     const driver = await createDriverAccount(await readDriverAccountInput(event));

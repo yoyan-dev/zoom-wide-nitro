@@ -1,19 +1,17 @@
 export type UserRole =
   | "admin"
-  | "manager"
-  | "staff"
   | "customer"
-  | "warehouse_manager"
-  | "finance"
   | "driver"
-  | "supplier"
-  | "auditor";
+  | "supplier";
+
+export type CustomerType = "contractor" | "regular";
 
 export interface User {
   id: string;
   email: string;
   full_name: string;
   role: UserRole;
+  customer_type: CustomerType | null;
   phone: string | null;
   image_url: string | null;
   is_active: boolean;

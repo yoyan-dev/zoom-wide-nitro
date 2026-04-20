@@ -27,6 +27,7 @@ export const createOrderRequestItemSchema = z.object({
 
 export const createOrderRequestSchema = z.object({
   customer_id: textIdSchema,
+  project_id: textIdSchema.optional(),
   notes: z.string().trim().max(2000).nullable().optional(),
   items: z.array(createOrderRequestItemSchema).min(1),
 });

@@ -1,20 +1,18 @@
-import type { Warehouse } from "../../types";
+import type { Project } from "../../types";
 import {
   ensureRepositorySuccess,
   mapOptionalRecord,
   useRepositoryClient,
 } from "../../utils/supabase-repository";
 
-export async function getWarehouseByIdRecord(
-  id: string,
-): Promise<Warehouse | null> {
+export async function getProjectByIdRecord(id: string): Promise<Project | null> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
-    .from("warehouses")
+    .from("projects")
     .select("*")
     .eq("id", id)
     .maybeSingle();
 
   ensureRepositorySuccess(error);
-  return mapOptionalRecord((data ?? null) as Warehouse | null);
+  return mapOptionalRecord((data ?? null) as Project | null);
 }

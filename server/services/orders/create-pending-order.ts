@@ -1,5 +1,6 @@
 import type { Order, Product } from "../../types";
 import { getCustomerByIdRecord } from "../../repositories/customers/get-customer-by-id";
+import { createProjectOrderRecord } from "../../repositories/project-orders/create-project-order";
 import { createOrderRecord } from "../../repositories/orders/create-order";
 import { createOrderItemsRecord } from "../../repositories/orders/create-order-items";
 import { deleteOrderRecord } from "../../repositories/orders/delete-order";
@@ -20,6 +21,7 @@ type ValidatedPendingOrderItem = {
 
 export type CreatePendingOrderInput = {
   customer_id: string;
+  project_id?: string;
   notes?: string | null;
   items: PendingOrderItemInput[];
   requireSufficientStock?: boolean;
@@ -118,6 +120,13 @@ export async function createPendingOrder(
         line_total: item.quantity * (item.product.price as number),
       })),
     );
+
+    if (input.project_id) {
+      await createProjectOrderRecord({
+        project_id: input.project_id,
+        order_id: order.id,
+      });
+    }
   } catch (error) {
     await deleteOrderRecord(order.id);
     throw error;

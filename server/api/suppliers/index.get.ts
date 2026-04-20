@@ -1,22 +1,27 @@
 import { defineEventHandler } from "h3";
-import { listWarehouses } from "../../services/warehouses/list-warehouses";
+import { listSuppliers } from "../../services/supplier.service";
 import { handleRouteError } from "../../utils/handle-route-error";
+import { requireRole } from "../../utils/permissions";
 import { parseQuery } from "../../utils/query";
 import { paginated } from "../../utils/response";
 import { number, optional, string } from "../../utils/validator";
 
 export default defineEventHandler(async (event) => {
   try {
+    requireRole(
+      event,
+      "admin",
+      "Only admin users can view supplier accounts",
+    );
+
     const query = parseQuery(event, {
       q: (value) => optional(value, (current) => string(current, "q")),
-      status: (value) =>
-        optional(value, (current) => string(current, "status")),
       page: (value) => optional(value, (current) => number(current, "page")) ?? 1,
       limit: (value) =>
         optional(value, (current) => number(current, "limit")) ?? 10,
     });
 
-    const result = await listWarehouses(query);
+    const result = await listSuppliers(query);
 
     return paginated(result.data, result.meta);
   } catch (error) {

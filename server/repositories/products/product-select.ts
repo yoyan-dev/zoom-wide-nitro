@@ -1,2 +1,2 @@
 export const PRODUCT_RELATION_SELECT =
-  "*, category:category_id, warehouse:warehouse_id";
+  "*, category:category_id";

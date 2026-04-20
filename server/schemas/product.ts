@@ -15,7 +15,6 @@ export const productHandbookDetailsSchema = z.object({
 
 export const createProductSchema = z.object({
   category_id: textIdSchema,
-  warehouse_id: textIdSchema.nullable().optional(),
   sku: z.string().trim().min(1).max(60),
   name: z.string().trim().min(1).max(160),
   description: z.string().trim().max(2000).nullable().optional(),

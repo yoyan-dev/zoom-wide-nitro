@@ -41,6 +41,10 @@ export async function login(input: unknown): Promise<AuthResponseData> {
     email: data.user.email ?? parsedInput.data.email,
     imageUrl: data.user.user_metadata?.image_url ?? null,
     role: data.user.app_metadata?.role ?? data.user.user_metadata?.role ?? null,
+    customerType:
+      data.user.app_metadata?.customer_type ??
+      data.user.user_metadata?.customer_type ??
+      null,
   });
 
   if (resolvedUser.isActive === false) {
