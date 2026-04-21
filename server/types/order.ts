@@ -1,5 +1,6 @@
 import type { Customer } from "./customer";
 import type { PaginationMeta, PaginationParams } from "./pagination";
+import type { Project } from "./project";
 import type { Product } from "./product";
 
 export type OrderStatus =
@@ -21,6 +22,8 @@ export interface Order {
   status: OrderStatus;
   total_amount: number;
   notes: string | null;
+  project_id?: string | null;
+  project?: Project | null;
   approved_by: string | null;
   rejection_reason: string | null;
   created_at: string;

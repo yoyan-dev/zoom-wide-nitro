@@ -24,7 +24,7 @@ export async function requireDriverAccess(
 
   if (
     requestUser.id === driver.user_id ||
-    hasRole(requestUser, ["admin", "staff"])
+    hasRole(requestUser, "admin")
   ) {
     return driver;
   }

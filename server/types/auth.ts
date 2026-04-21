@@ -1,12 +1,14 @@
 import type { Customer } from "./customer";
 import type { Driver } from "./driver";
-import type { UserRole } from "./user";
+import type { Supplier } from "./supplier";
+import type { CustomerType, UserRole } from "./user";
 
 export interface AuthUserProfile {
   id: string;
   email: string | null;
   image_url: string | null;
   role: UserRole | null;
+  customer_type: CustomerType | null;
   roleSource: "users_table" | "auth_metadata" | "none";
   is_active: boolean | null;
 }
@@ -25,12 +27,14 @@ export interface AuthResponseData {
   session: AuthSessionPayload | null;
   user: AuthUserProfile;
   customer: Customer | null;
+  supplier: Supplier | null;
 }
 
 export interface CurrentAccountData {
   user: AuthUserProfile;
   customer: Customer | null;
   driver: Driver | null;
+  supplier: Supplier | null;
 }
 
 export interface AuthLogoutResponseData {

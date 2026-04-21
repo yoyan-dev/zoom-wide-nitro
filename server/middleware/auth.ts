@@ -38,6 +38,10 @@ export default defineEventHandler(async (event) => {
     email: authUser.email ?? null,
     imageUrl: authUser.user_metadata?.image_url ?? null,
     role: authUser.app_metadata?.role ?? authUser.user_metadata?.role ?? null,
+    customerType:
+      authUser.app_metadata?.customer_type ??
+      authUser.user_metadata?.customer_type ??
+      null,
   });
 
   event.context.auth = getAuthenticatedAuthContext({

@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
   try {
     requireRole(
       event,
-      ["admin", "staff"],
-      "Only admin or staff users can delete driver accounts",
+      "admin",
+      "Only admin users can delete driver accounts",
     );
 
     await deleteDriverAccount(getRouterParam(event, "id"));

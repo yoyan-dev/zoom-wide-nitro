@@ -11,5 +11,5 @@ export * from "./inventory";
 export * from "./order";
 export * from "./payment";
 export * from "./product";
+export * from "./project";
 export * from "./user";
-export * from "./warehouse";

@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
   try {
     requireRole(
       event,
-      ["admin", "staff"],
-      "Only admin or staff users can update driver accounts",
+      "admin",
+      "Only admin users can update driver accounts",
     );
 
     const driver = await updateDriverAccount({

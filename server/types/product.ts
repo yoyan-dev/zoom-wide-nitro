@@ -1,7 +1,7 @@
 import type { Category } from "./category";
 import type { InventoryStockItem } from "./inventory";
 import type { PaginationMeta, PaginationParams } from "./pagination";
-import type { Warehouse } from "./warehouse";
+import type { Supplier } from "./supplier";
 
 export interface ProductSpecification {
   label: string;
@@ -18,7 +18,7 @@ export interface ProductHandbookDetails {
 export interface Product {
   id?: string;
   category_id?: string;
-  warehouse_id?: string | null;
+  supplier_id?: string;
   sku?: string;
   name?: string;
   description?: string | null;
@@ -28,7 +28,7 @@ export interface Product {
   stock_quantity?: number;
   minimum_stock_quantity?: number;
   category?: Category;
-  warehouse?: Warehouse;
+  supplier?: Supplier;
   handbook?: ProductHandbookDetails;
   is_active?: boolean;
   created_at?: string;

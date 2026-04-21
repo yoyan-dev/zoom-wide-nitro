@@ -15,7 +15,6 @@ export async function createProductRecord(
   const supabase = useRepositoryClient();
   const payload = {
     category_id: input.category_id,
-    warehouse_id: input.warehouse_id ?? null,
     sku: input.sku,
     name: input.name,
     description: input.description ?? null,

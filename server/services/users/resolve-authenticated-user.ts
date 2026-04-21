@@ -1,12 +1,17 @@
 import type { User } from "../../types";
 import { getUserByIdRecord } from "../../repositories/users/get-user-by-id";
-import { type AuthenticatedRequestUser, isUserRole } from "../../utils/auth";
+import {
+  type AuthenticatedRequestUser,
+  isCustomerType,
+  isUserRole,
+} from "../../utils/auth";
 
 type ResolveAuthenticatedUserInput = {
   id: string;
   email?: string | null;
   imageUrl?: string | null;
   role?: unknown;
+  customerType?: unknown;
 };
 
 function mapUserTableResult(
@@ -21,6 +26,7 @@ function mapUserTableResult(
       email: resolvedEmail,
       imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: null,
+      customerType: null,
       roleSource: "none",
       isActive: false,
     };
@@ -32,6 +38,7 @@ function mapUserTableResult(
       email: resolvedEmail,
       imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: record.role,
+      customerType: record.customer_type,
       roleSource: "users_table",
       isActive: record.is_active,
     };
@@ -42,6 +49,7 @@ function mapUserTableResult(
     email: resolvedEmail,
     imageUrl: record.image_url ?? fallback.imageUrl ?? null,
     role: null,
+    customerType: null,
     roleSource: "none",
     isActive: record.is_active,
   };
@@ -51,12 +59,16 @@ function mapFallbackResult(
   input: ResolveAuthenticatedUserInput,
 ): AuthenticatedRequestUser {
   const fallbackRole = isUserRole(input.role) ? input.role : null;
+  const fallbackCustomerType = isCustomerType(input.customerType)
+    ? input.customerType
+    : null;
 
   return {
     id: input.id,
     email: input.email ?? null,
     imageUrl: input.imageUrl ?? null,
     role: fallbackRole,
+    customerType: fallbackCustomerType,
     roleSource: fallbackRole ? "auth_metadata" : "none",
     isActive: null,
   };

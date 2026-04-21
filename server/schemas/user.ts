@@ -19,13 +19,8 @@ const managedUserAccountUpdateSchema = z.object({
 
 export const INTERNAL_USER_ROLES = [
   "admin",
-  "manager",
-  "staff",
-  "warehouse_manager",
-  "finance",
   "supplier",
-  "auditor",
- ] as const;
+] as const;
 
 export const internalUserRoleSchema = z.enum(INTERNAL_USER_ROLES);
 

@@ -6,7 +6,7 @@ import {
   type User as SupabaseAuthUser,
 } from "@supabase/supabase-js";
 import { useRuntimeConfig } from "nitropack/runtime";
-import type { UserRole } from "../types";
+import type { CustomerType, UserRole } from "../types";
 
 let supabaseAdmin: SupabaseClient | null = null;
 
@@ -137,6 +137,7 @@ export async function createSupabaseAuthUser(input: {
   email: string;
   password: string;
   role: UserRole;
+  customerType?: CustomerType | null;
   fullName: string;
   phone?: string | null;
   imageUrl?: string | null;
@@ -148,11 +149,13 @@ export async function createSupabaseAuthUser(input: {
     email_confirm: true,
     app_metadata: {
       role: input.role,
+      customer_type: input.customerType ?? null,
     },
     user_metadata: {
       full_name: input.fullName,
       phone: input.phone ?? null,
       image_url: input.imageUrl ?? null,
+      customer_type: input.customerType ?? null,
     },
   });
 
@@ -177,6 +180,7 @@ export async function updateSupabaseAuthUser(input: {
   email?: string;
   password?: string;
   role?: UserRole;
+  customerType?: CustomerType | null;
   fullName?: string;
   phone?: string | null;
   imageUrl?: string | null;
@@ -193,16 +197,18 @@ export async function updateSupabaseAuthUser(input: {
     payload.password = input.password;
   }
 
-  if (input.role !== undefined) {
+  if (input.role !== undefined || input.customerType !== undefined) {
     payload.app_metadata = {
       role: input.role,
+      customer_type: input.customerType,
     };
   }
 
   if (
     input.fullName !== undefined ||
     input.phone !== undefined ||
-    input.imageUrl !== undefined
+    input.imageUrl !== undefined ||
+    input.customerType !== undefined
   ) {
     const userMetadata: Record<string, unknown> = {};
 
@@ -216,6 +222,10 @@ export async function updateSupabaseAuthUser(input: {
 
     if (input.imageUrl !== undefined) {
       userMetadata.image_url = input.imageUrl;
+    }
+
+    if (input.customerType !== undefined) {
+      userMetadata.customer_type = input.customerType;
     }
 
     payload.user_metadata = userMetadata;

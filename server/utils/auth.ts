@@ -1,10 +1,11 @@
 import { getHeader, type H3Event } from "h3";
-import type { UserRole } from "../types/user";
+import type { CustomerType, UserRole } from "../types/user";
 import { unauthorizedError } from "./errors";
 
 export type AuthenticatedRequestUser = {
   id: string;
   role: UserRole | null;
+  customerType: CustomerType | null;
   email: string | null;
   imageUrl: string | null;
   roleSource: "users_table" | "auth_metadata" | "none";
@@ -20,18 +21,22 @@ export type RequestAuthContext = {
 
 const USER_ROLES: UserRole[] = [
   "admin",
-  "manager",
-  "staff",
   "customer",
-  "warehouse_manager",
-  "finance",
   "driver",
   "supplier",
-  "auditor",
 ];
+
+const CUSTOMER_TYPES: CustomerType[] = ["contractor", "regular"];
 
 export function isUserRole(value: unknown): value is UserRole {
   return typeof value === "string" && USER_ROLES.includes(value as UserRole);
+}
+
+export function isCustomerType(value: unknown): value is CustomerType {
+  return (
+    typeof value === "string" &&
+    CUSTOMER_TYPES.includes(value as CustomerType)
+  );
 }
 
 export function extractBearerToken(event: H3Event): string | null {

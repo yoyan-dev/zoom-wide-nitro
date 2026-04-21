@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
       "orders:write",
     );
 
-    const order = await createOrder(body);
+    const order = await createOrder(event, body);
 
     setResponseStatus(event, 201);
     return created(order, {
