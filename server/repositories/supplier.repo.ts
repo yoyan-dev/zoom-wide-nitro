@@ -1,4 +1,5 @@
-import type { Supplier } from "../types";
+import type { Supplier } from "../types/supplier";
+import type { User } from "../types/user";
 import type { RepositoryListResult } from "../utils/supabase-repository";
 import {
   ensureRepositorySuccess,
@@ -9,6 +10,22 @@ import {
 import { USER_SELECT } from "./users/user-select";
 
 const SUPPLIER_SELECT = `id, user_id, name, contact_name, phone, email, address, created_at, updated_at, user:user_id(${USER_SELECT})`;
+
+type SupplierRecord = Omit<Supplier, "user" | "is_active"> & {
+  user?: User | User[] | null;
+};
+
+function normalizeSupplierRecord(record: SupplierRecord): Supplier {
+  const resolvedUser = Array.isArray(record.user)
+    ? (record.user[0] ?? null)
+    : (record.user ?? null);
+
+  return {
+    ...record,
+    user: resolvedUser,
+    is_active: resolvedUser?.is_active,
+  };
+}
 
 export async function getUserByEmailRecord(email: string): Promise<{
   id: string;
@@ -22,7 +39,9 @@ export async function getUserByEmailRecord(email: string): Promise<{
     .maybeSingle();
 
   ensureRepositorySuccess(error);
-  return mapOptionalRecord((data ?? null) as { id: string; email: string } | null);
+  return mapOptionalRecord(
+    (data ?? null) as { id: string; email: string } | null,
+  );
 }
 
 export async function listSupplierRecords(params: {
@@ -54,12 +73,14 @@ export async function listSupplierRecords(params: {
 
   ensureRepositorySuccess(error);
   return mapListResult({
-    data: (data ?? []) as Supplier[],
+    data: ((data ?? []) as SupplierRecord[]).map(normalizeSupplierRecord),
     count,
   });
 }
 
-export async function getSupplierByIdRecord(id: string): Promise<Supplier | null> {
+export async function getSupplierByIdRecord(
+  id: string,
+): Promise<Supplier | null> {
   const supabase = useRepositoryClient();
   const { data, error } = await supabase
     .from("suppliers")
@@ -68,7 +89,9 @@ export async function getSupplierByIdRecord(id: string): Promise<Supplier | null
     .maybeSingle();
 
   ensureRepositorySuccess(error);
-  return mapOptionalRecord((data ?? null) as Supplier | null);
+  return mapOptionalRecord(
+    data ? normalizeSupplierRecord(data as SupplierRecord) : null,
+  );
 }
 
 export async function getSupplierByUserIdRecord(
@@ -82,7 +105,9 @@ export async function getSupplierByUserIdRecord(
     .maybeSingle();
 
   ensureRepositorySuccess(error);
-  return mapOptionalRecord((data ?? null) as Supplier | null);
+  return mapOptionalRecord(
+    data ? normalizeSupplierRecord(data as SupplierRecord) : null,
+  );
 }
 
 export async function createSupplierRecord(input: {
@@ -112,7 +137,7 @@ export async function createSupplierRecord(input: {
     .single();
 
   ensureRepositorySuccess(error);
-  return data as Supplier;
+  return normalizeSupplierRecord(data as SupplierRecord);
 }
 
 export async function updateSupplierRecord(
@@ -145,7 +170,9 @@ export async function updateSupplierRecord(
     .maybeSingle();
 
   ensureRepositorySuccess(error);
-  return mapOptionalRecord((data ?? null) as Supplier | null);
+  return mapOptionalRecord(
+    data ? normalizeSupplierRecord(data as SupplierRecord) : null,
+  );
 }
 
 export async function deleteSupplierRecord(id: string): Promise<boolean> {
