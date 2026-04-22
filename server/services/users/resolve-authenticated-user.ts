@@ -11,7 +11,7 @@ type ResolveAuthenticatedUserInput = {
   email?: string | null;
   imageUrl?: string | null;
   role?: unknown;
-  customerType?: unknown;
+  customer_type?: unknown;
 };
 
 function mapUserTableResult(
@@ -26,7 +26,7 @@ function mapUserTableResult(
       email: resolvedEmail,
       imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: null,
-      customerType: null,
+      customer_type: null,
       roleSource: "none",
       isActive: false,
     };
@@ -38,7 +38,7 @@ function mapUserTableResult(
       email: resolvedEmail,
       imageUrl: record.image_url ?? fallback.imageUrl ?? null,
       role: record.role,
-      customerType: record.customer_type,
+      customer_type: record.customer_type,
       roleSource: "users_table",
       isActive: record.is_active,
     };
@@ -49,7 +49,7 @@ function mapUserTableResult(
     email: resolvedEmail,
     imageUrl: record.image_url ?? fallback.imageUrl ?? null,
     role: null,
-    customerType: null,
+    customer_type: null,
     roleSource: "none",
     isActive: record.is_active,
   };
@@ -59,8 +59,8 @@ function mapFallbackResult(
   input: ResolveAuthenticatedUserInput,
 ): AuthenticatedRequestUser {
   const fallbackRole = isUserRole(input.role) ? input.role : null;
-  const fallbackCustomerType = isCustomerType(input.customerType)
-    ? input.customerType
+  const fallbackCustomerType = isCustomerType(input.customer_type)
+    ? input.customer_type
     : null;
 
   return {
@@ -68,7 +68,7 @@ function mapFallbackResult(
     email: input.email ?? null,
     imageUrl: input.imageUrl ?? null,
     role: fallbackRole,
-    customerType: fallbackCustomerType,
+    customer_type: fallbackCustomerType,
     roleSource: fallbackRole ? "auth_metadata" : "none",
     isActive: null,
   };

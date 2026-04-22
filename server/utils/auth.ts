@@ -5,7 +5,7 @@ import { unauthorizedError } from "./errors";
 export type AuthenticatedRequestUser = {
   id: string;
   role: UserRole | null;
-  customerType: CustomerType | null;
+  customer_type: CustomerType | null;
   email: string | null;
   imageUrl: string | null;
   roleSource: "users_table" | "auth_metadata" | "none";
@@ -19,12 +19,7 @@ export type RequestAuthContext = {
   error: string | null;
 };
 
-const USER_ROLES: UserRole[] = [
-  "admin",
-  "customer",
-  "driver",
-  "supplier",
-];
+const USER_ROLES: UserRole[] = ["admin", "customer", "driver", "supplier"];
 
 const CUSTOMER_TYPES: CustomerType[] = ["contractor", "regular"];
 
@@ -34,8 +29,7 @@ export function isUserRole(value: unknown): value is UserRole {
 
 export function isCustomerType(value: unknown): value is CustomerType {
   return (
-    typeof value === "string" &&
-    CUSTOMER_TYPES.includes(value as CustomerType)
+    typeof value === "string" && CUSTOMER_TYPES.includes(value as CustomerType)
   );
 }
 

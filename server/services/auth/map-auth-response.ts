@@ -10,7 +10,7 @@ export function mapAuthUserProfile(user: AuthenticatedRequestUser) {
     email: user.email,
     image_url: user.imageUrl,
     role: user.role,
-    customer_type: user.customerType,
+    customer_type: user.customer_type,
     roleSource: user.roleSource,
     is_active: user.isActive,
   };

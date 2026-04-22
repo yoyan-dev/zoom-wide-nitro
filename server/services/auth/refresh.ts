@@ -53,7 +53,7 @@ export async function refreshAuthSession(
       data.session.user.app_metadata?.role ??
       data.session.user.user_metadata?.role ??
       null,
-    customerType:
+    customer_type:
       data.user.app_metadata?.customer_type ??
       data.user.user_metadata?.customer_type ??
       data.session.user.app_metadata?.customer_type ??
