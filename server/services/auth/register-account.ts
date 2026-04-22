@@ -100,7 +100,7 @@ export async function registerAccount(
       email: data.email,
       imageUrl: data.image_url ?? null,
       role: data.role,
-      customerType: data.role === "customer" ? data.customer_type : null,
+      customer_type: data.role === "customer" ? data.customer_type : null,
     });
 
     return buildAuthResponseData({

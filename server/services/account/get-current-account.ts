@@ -16,7 +16,7 @@ export async function getCurrentAccount(
     email: requestUser.email,
     imageUrl: requestUser.imageUrl,
     role: requestUser.role,
-    customerType: requestUser.customerType,
+    customer_type: requestUser.customer_type,
   });
   const [customer, driver, supplier] = await Promise.all([
     getCustomerByUserIdRecord(requestUser.id),

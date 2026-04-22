@@ -426,7 +426,13 @@ const sections: Section[] = [
         method: "POST",
         path: "/api/projects",
         access: "bearer: contractor customer",
-        input: "json: name, location?, start_date?, end_date?",
+        input:
+          "json: name, location?, description?, start_date?, end_date?, status?, progress?, budget?",
+      },
+      {
+        method: "GET",
+        path: "/api/projects/:id",
+        access: "bearer: contractor customer",
       },
       {
         method: "PATCH",
@@ -438,6 +444,34 @@ const sections: Section[] = [
         method: "DELETE",
         path: "/api/projects/:id",
         access: "bearer: contractor customer",
+      },
+      {
+        method: "GET",
+        path: "/api/projects/:id/items",
+        access: "bearer: contractor customer",
+      },
+      {
+        method: "POST",
+        path: "/api/projects/:id/items",
+        access: "bearer: contractor customer",
+        input: "json: product_id, quantity, unit_price?",
+      },
+      {
+        method: "PATCH",
+        path: "/api/projects/:id/items/:itemId",
+        access: "bearer: contractor customer",
+        input: "json: quantity",
+      },
+      {
+        method: "DELETE",
+        path: "/api/projects/:id/items/:itemId",
+        access: "bearer: contractor customer",
+      },
+      {
+        method: "POST",
+        path: "/api/projects/:id/checkout",
+        access: "bearer: contractor customer",
+        note: "Creates a pending order from the project's stored items and updates project totals.",
       },
     ],
   },
